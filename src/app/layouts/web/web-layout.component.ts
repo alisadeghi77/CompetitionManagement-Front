@@ -10,26 +10,30 @@ import { Observable } from 'rxjs';
   standalone: true,
   imports: [RouterOutlet, CommonModule],
   template: `
-    <div class="web-layout">
+    <div class="web-layout" dir="rtl">
       <!-- Header -->
       <header class="header">
         <div class="container">
           <div class="logo">
-            <h1>Competition Management</h1>
+            <h1>مدیریت مسابقات</h1>
+            <nav>
+              <ul>
+              <li><a routerLink="/">خانه</a></li>
+              <li><a routerLink="/competitions">مسابقات</a></li>
+              <li><a routerLink="/register">ثبت نام</a></li>
+              <li *ngIf="isAuthenticated$ | async">
+                <a routerLink="/profile">پروفایل</a>
+              </li>
+            </ul>
+            </nav>
           </div>
-          <nav>
-            <ul>
-              <li><a routerLink="/">Home</a></li>
-              <li><a routerLink="/competitions">Competitions</a></li>
-              <li><a routerLink="/register">Register</a></li>
-              <li *ngIf="isAuthenticated$ | async">
-                <a routerLink="/profile">Profile</a>
-              </li>
-              <li *ngIf="!(isAuthenticated$ | async)">
-                <a routerLink="/login">Login</a>
+         <nav>
+          <ul>
+               <li *ngIf="!(isAuthenticated$ | async)">
+                <a routerLink="/login">ورود</a>
               </li>
               <li *ngIf="isAuthenticated$ | async">
-                <button (click)="logout()">Logout</button>
+                <button (click)="logout()">خروج</button>
               </li>
             </ul>
           </nav>
@@ -44,7 +48,7 @@ import { Observable } from 'rxjs';
       <!-- Footer -->
       <footer class="footer">
         <div class="container">
-          <p>&copy; 2024 Competition Management. All rights reserved.</p>
+          <p>&copy; 2024 مدیریت مسابقات. تمامی حقوق محفوظ است.</p>
         </div>
       </footer>
     </div>
@@ -71,9 +75,15 @@ import { Observable } from 'rxjs';
       align-items: center;
     }
 
+    .logo{
+        display:flex
+    }
+
     .logo h1 {
       margin: 0;
+      margin-left:16px;
       font-size: 1.5rem;
+      font-family: 'IRANSans', sans-serif;
     }
 
     nav ul {
@@ -87,6 +97,17 @@ import { Observable } from 'rxjs';
     nav ul li a {
       text-decoration: none;
       color: #333;
+      font-family: 'IRANSans', sans-serif;
+    }
+
+    nav ul li button {
+      background: none;
+      border: none;
+      color: #333;
+      cursor: pointer;
+      font-family: 'IRANSans', sans-serif;
+      padding: 0;
+      font-size: 1rem;
     }
 
     main {
@@ -99,6 +120,7 @@ import { Observable } from 'rxjs';
       color: white;
       padding: 1rem 0;
       text-align: center;
+      font-family: 'IRANSans', sans-serif;
     }
   `]
 })
