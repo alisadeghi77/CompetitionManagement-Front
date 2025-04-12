@@ -1,5 +1,5 @@
 import { inject } from '@angular/core';
-import { Router } from '@angular/router';
+import { Router, UrlTree } from '@angular/router';
 import { AuthService } from '../http-services/auth.service';
 import { map, take } from 'rxjs/operators';
 
@@ -13,7 +13,16 @@ export const authGuard = () => {
       if (user) {
         return true;
       }
-      return router.createUrlTree(['/login']);
+
+      // Encode the current URL to use as returnUrl
+      const currentUrl = window.location.pathname;
+      console.log(currentUrl)
+      const encodedReturnUrl = encodeURIComponent(currentUrl);
+
+      // Redirect to login with returnUrl
+      return router.createUrlTree(['/login'], {
+        queryParams: { returnUrl: encodedReturnUrl }
+      });
     })
   );
 };

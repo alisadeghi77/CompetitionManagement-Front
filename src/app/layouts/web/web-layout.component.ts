@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
+import { RouterOutlet, Router, RouterModule, RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { map } from 'rxjs/operators';
 import { AuthService } from '../../core/http-services/auth.service';
@@ -8,7 +8,7 @@ import { Observable } from 'rxjs';
 @Component({
   selector: 'app-web-layout',
   standalone: true,
-  imports: [RouterOutlet, CommonModule],
+  imports: [RouterOutlet, CommonModule, RouterModule, RouterLink],
   template: `
     <div class="web-layout" dir="rtl">
       <!-- Header -->
@@ -30,7 +30,7 @@ import { Observable } from 'rxjs';
          <nav>
           <ul>
                <li *ngIf="!(isAuthenticated$ | async)">
-                <a routerLink="/login">ورود</a>
+                <a [routerLink]="['/login']" [queryParams]="{ returnUrl: getCurrentUrl() }">ورود</a>
               </li>
               <li *ngIf="isAuthenticated$ | async">
                 <button (click)="logout()">خروج</button>
@@ -128,14 +128,26 @@ export class WebLayoutComponent {
 
   isAuthenticated$: Observable<boolean>;
 
-  constructor(private authService: AuthService) {
+  constructor(
+    private authService: AuthService,
+    private router: Router
+  ) {
     this.isAuthenticated$ = this.authService.currentUser$.pipe(
       map(user => !!user)
     );
   }
 
-
   logout() {
     this.authService.logout();
+    // After logout, redirect to login page with the current URL as return URL
+    const currentUrl = this.getCurrentUrl();
+    this.router.navigate(['/login'], {
+      queryParams: { returnUrl: currentUrl }
+    });
+  }
+
+  getCurrentUrl(): string {
+    console.log("a",this.router.url)
+    return encodeURIComponent(this.router.url);
   }
 }

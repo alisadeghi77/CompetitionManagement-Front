@@ -36,7 +36,7 @@ import { PersianDatePipe } from '../../../shared/pipes/persian-date.pipe';
                 </span>
               </div>
             </div>
-            <a [routerLink]="['/competitions', competition.id]" class="details-button">
+            <a [routerLink]="['/competition', competition.id]" class="details-button">
               مشاهده جزئیات
             </a>
           </div>

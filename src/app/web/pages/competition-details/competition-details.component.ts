@@ -5,12 +5,14 @@ import { CompetitionService } from '../../../core/http-services/competition.serv
 import { ImageComponent } from '../../../shared/components/image/image.component';
 import { PersianDatePipe } from '../../../shared/pipes/persian-date.pipe';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { RegisterModalComponent } from '../../../shared/components/register-modal/register-modal.component';
+// import { RegisterModalComponent } from '../../../shared/components/register-modal/register-modal.component';
 
 @Component({
   selector: 'app-competition-details',
   standalone: true,
-  imports: [CommonModule, RouterModule, ImageComponent, PersianDatePipe, RegisterModalComponent],
+  imports: [CommonModule, RouterModule, ImageComponent, PersianDatePipe,
+    // RegisterModalComponent
+  ],
   template: `
     <div class="competition-details-container" dir="rtl">
       <div *ngIf="loading" class="loading-spinner">
@@ -321,13 +323,13 @@ export class CompetitionDetailsComponent implements OnInit {
   }
 
   openRegisterModal() {
-    const modalRef = this.modalService.open(RegisterModalComponent, {
-      size: 'lg',
-      centered: true,
-      scrollable: true
-    });
+    // const modalRef = this.modalService.open(RegisterModalComponent, {
+    //   size: 'lg',
+    //   centered: true,
+    //   scrollable: true
+    // });
 
-    modalRef.componentInstance.competitionId = this.competitionId;
-    modalRef.componentInstance.competitionParams = this.competition.params;
+    // modalRef.componentInstance.competitionId = this.competitionId;
+    // modalRef.componentInstance.competitionParams = this.competition.params;
   }
 }
