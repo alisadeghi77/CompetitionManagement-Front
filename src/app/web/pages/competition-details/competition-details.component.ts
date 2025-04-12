@@ -1,10 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ActivatedRoute, RouterModule } from '@angular/router';
+import { ActivatedRoute, RouterModule, Router } from '@angular/router';
 import { CompetitionService } from '../../../core/http-services/competition.service';
 import { ImageComponent } from '../../../shared/components/image/image.component';
 import { PersianDatePipe } from '../../../shared/pipes/persian-date.pipe';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { AuthService } from '../../../core/http-services/auth.service';
 // import { RegisterModalComponent } from '../../../shared/components/register-modal/register-modal.component';
 
 @Component({
@@ -77,8 +78,10 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
 
         <!-- TODO: change perdicate *ngIf="competition.status === 2 && competition.canRegister" -->
-        <div  class="register-section">
-          <button class="register-button" (click)="openRegisterModal()">ثبت نام در مسابقه</button>
+        <div class="register-section">
+          <button class="register-button" (click)="openRegisterModal()">
+            ثبت نام در مسابقه
+          </button>
         </div>
         </div>
 
@@ -264,14 +267,22 @@ export class CompetitionDetailsComponent implements OnInit {
   competition: any = null;
   loading = true;
   error: string | null = null;
+  isAuthenticated = false;
 
   constructor(
     private route: ActivatedRoute,
     private competitionService: CompetitionService,
-    private modalService: NgbModal
+    private modalService: NgbModal,
+    private router: Router,
+    private authService: AuthService
   ) { }
 
   ngOnInit() {
+    // Check authentication status
+    this.authService.currentUser$.subscribe(user => {
+      this.isAuthenticated = !!user;
+    });
+
     this.route.paramMap.subscribe(params => {
       const id = params.get('id');
       if (id) {
@@ -323,13 +334,12 @@ export class CompetitionDetailsComponent implements OnInit {
   }
 
   openRegisterModal() {
-    // const modalRef = this.modalService.open(RegisterModalComponent, {
-    //   size: 'lg',
-    //   centered: true,
-    //   scrollable: true
-    // });
+    const currentUrl = `/competitions/${this.competitionId}`;
+    const encodedReturnUrl = encodeURIComponent(currentUrl);
 
-    // modalRef.componentInstance.competitionId = this.competitionId;
-    // modalRef.componentInstance.competitionParams = this.competition.params;
+    // Always go to register page, but with return URL for after registration
+    this.router.navigate(['/register/participant'], {
+      queryParams: { returnUrl: encodedReturnUrl }
+    });
   }
 }

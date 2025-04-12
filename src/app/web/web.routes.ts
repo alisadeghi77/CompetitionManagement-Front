@@ -29,6 +29,21 @@ export const webRoutes: Routes = [
         loadComponent: () => import('./pages/auth/verify/verify.component').then(m => m.VerifyComponent)
       },
       {
+        path: 'register/participant',
+        loadComponent: () => import('./pages/auth/register/register.component').then(m => m.RegisterComponent),
+        data: { registerType: 'participant' }
+      },
+      {
+        path: 'register/planner',
+        loadComponent: () => import('./pages/auth/register/register.component').then(m => m.RegisterComponent),
+        data: { registerType: 'planner' }
+      },
+      {
+        path: 'register',
+        redirectTo: 'register/participant',
+        pathMatch: 'full'
+      },
+      {
         path: 'profile',
         canActivate: [authGuard],
         loadComponent: () => import('./pages/profile/profile.component').then(m => m.ProfileComponent)

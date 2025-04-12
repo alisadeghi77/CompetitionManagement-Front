@@ -20,7 +20,7 @@ import { Observable } from 'rxjs';
               <ul>
               <li><a routerLink="/">خانه</a></li>
               <li><a routerLink="/competitions">مسابقات</a></li>
-              <li><a routerLink="/register">ثبت نام</a></li>
+              <li><a [routerLink]="['/register']" [queryParams]="{ returnUrl: getCurrentUrl() }">ثبت نام</a></li>
               <li *ngIf="isAuthenticated$ | async">
                 <a routerLink="/profile">پروفایل</a>
               </li>
@@ -147,7 +147,6 @@ export class WebLayoutComponent {
   }
 
   getCurrentUrl(): string {
-    console.log("a",this.router.url)
     return encodeURIComponent(this.router.url);
   }
 }
