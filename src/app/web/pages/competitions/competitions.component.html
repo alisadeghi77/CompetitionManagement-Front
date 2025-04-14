@@ -1,0 +1,41 @@
+<div class="competitions-container" dir="rtl">
+  <h1 class="page-title">مسابقات</h1>
+
+  <div class="competitions-grid">
+    <div *ngFor="let competition of competitions" class="competition-card">
+      <div class="card-image">
+        <app-image
+          [fileId]="competition.bannerImageId"
+          [altText]="competition.title"
+          className="card-image"
+        />
+      </div>
+      <div class="card-content">
+        <h2 class="competition-title">{{ competition.title }}</h2>
+        <div class="competition-info">
+          <div class="info-item">
+            <span class="label">تاریخ:</span>
+            <span class="value">{{ competition.date | persianDate:'jYYYY/jMM/jDD' }}</span>
+          </div>
+          <div class="info-item">
+            <span class="label">وضعیت:</span>
+            <span class="value status" [ngClass]="getStatusClass(competition.status)">
+              {{ getStatusText(competition.status) }}
+            </span>
+          </div>
+        </div>
+        <a [routerLink]="['/competition', competition.id]" class="details-button">
+          مشاهده جزئیات
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <div *ngIf="loading" class="loading-spinner">
+    در حال بارگذاری...
+  </div>
+
+  <div *ngIf="error" class="error-message">
+    خطا در بارگذاری مسابقات. لطفا دوباره تلاش کنید.
+  </div>
+</div>

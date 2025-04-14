@@ -1,0 +1,39 @@
+<div class="verify-container">
+  <div class="verify-card">
+    <h2>تأیید کد</h2>
+    <p>کد تأیید ارسال شده به شماره {{ phoneNumber }} را وارد کنید</p>
+
+    <form [formGroup]="verifyForm" (ngSubmit)="onSubmit()">
+      <div class="form-group">
+        <label for="otpCode">کد تأیید</label>
+        <input
+          type="text"
+          id="otpCode"
+          formControlName="otpCode"
+          placeholder="****"
+          maxlength="4"
+          dir="ltr"
+        >
+        <div *ngIf="verifyForm.get('otpCode')?.invalid && verifyForm.get('otpCode')?.touched" class="error-message">
+          کد تأیید معتبر وارد کنید
+        </div>
+      </div>
+      <button
+        type="submit"
+        [disabled]="verifyForm.invalid || isLoading"
+        class="btn-submit"
+      >
+        <span *ngIf="isLoading">در حال بررسی...</span>
+        <span *ngIf="!isLoading">تأیید</span>
+      </button>
+    </form>
+
+    <div class="back-section">
+      <a (click)="goBack()" class="back-link">بازگشت به صفحه ورود</a>
+    </div>
+
+    <div *ngIf="errorMessage" class="error-message">
+      {{ errorMessage }}
+    </div>
+  </div>
+</div>

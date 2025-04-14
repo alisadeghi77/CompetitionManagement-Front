@@ -1,0 +1,40 @@
+<div class="login-container">
+  <div class="login-card">
+    <h2>ورود به سیستم</h2>
+
+    <div *ngIf="isAuthenticated; else loginForm">
+      <p>شما قبلاً وارد شده‌اید!</p>
+      <button (click)="logout()" class="btn-logout">خروج</button>
+    </div>
+
+    <ng-template #loginForm>
+      <form [formGroup]="phoneForm" (ngSubmit)="onSubmit()">
+        <div class="form-group">
+          <label for="phoneNumber">شماره موبایل</label>
+          <input
+            type="text"
+            id="phoneNumber"
+            formControlName="phoneNumber"
+            placeholder="09XXXXXXXXX"
+            dir="ltr"
+          >
+          <div *ngIf="phoneForm.get('phoneNumber')?.invalid && phoneForm.get('phoneNumber')?.touched" class="error-message">
+            شماره موبایل معتبر وارد کنید
+          </div>
+        </div>
+        <button
+          type="submit"
+          [disabled]="phoneForm.invalid || isLoading"
+          class="btn-submit"
+        >
+          <span *ngIf="isLoading">در حال ارسال...</span>
+          <span *ngIf="!isLoading">ارسال کد تایید</span>
+        </button>
+      </form>
+    </ng-template>
+
+    <div *ngIf="errorMessage" class="error-message">
+      {{ errorMessage }}
+    </div>
+  </div>
+</div>

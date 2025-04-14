@@ -1,0 +1,77 @@
+<div class="register-container">
+  <div class="register-card">
+    <h2>ثبت نام {{ getRegisterTypeTitle() }}</h2>
+
+    <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
+      <div class="form-group">
+        <label for="firstName">نام</label>
+        <input
+          type="text"
+          id="firstName"
+          formControlName="firstName"
+          placeholder="نام خود را وارد کنید"
+        >
+        <div *ngIf="registerForm.get('firstName')?.invalid && registerForm.get('firstName')?.touched" class="error-message">
+          لطفاً نام خود را وارد کنید
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="lastName">نام خانوادگی</label>
+        <input
+          type="text"
+          id="lastName"
+          formControlName="lastName"
+          placeholder="نام خانوادگی خود را وارد کنید"
+        >
+        <div *ngIf="registerForm.get('lastName')?.invalid && registerForm.get('lastName')?.touched" class="error-message">
+          لطفاً نام خانوادگی خود را وارد کنید
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="phoneNumber">شماره موبایل</label>
+        <input
+          type="text"
+          id="phoneNumber"
+          formControlName="phoneNumber"
+          placeholder="09XXXXXXXXX"
+          dir="ltr"
+        >
+        <div *ngIf="registerForm.get('phoneNumber')?.invalid && registerForm.get('phoneNumber')?.touched" class="error-message">
+          شماره موبایل معتبر وارد کنید
+        </div>
+      </div>
+
+      <button
+        type="submit"
+        [disabled]="registerForm.invalid || isLoading"
+        class="btn-submit"
+      >
+        <span *ngIf="isLoading">در حال ثبت نام...</span>
+        <span *ngIf="!isLoading">ثبت نام</span>
+      </button>
+    </form>
+
+    <div class="login-link">
+      <p>قبلاً ثبت نام کرده‌اید؟ <a [routerLink]="['/login']" [queryParams]="{ returnUrl: returnUrl }">ورود</a></p>
+    </div>
+
+    <div *ngIf="errorMessage" class="error-message">
+      {{ errorMessage }}
+    </div>
+
+    <div class="register-toggle">
+      <p>
+        {{ registerType === 'participant'
+          ? 'می‌خواهید به عنوان برنامه‌ریز ثبت نام کنید؟'
+          : 'می‌خواهید به عنوان شرکت‌کننده ثبت نام کنید؟'
+        }}
+        <a [routerLink]="[registerType === 'participant' ? '/register/planner' : '/register/participant']"
+           [queryParams]="{ returnUrl: returnUrl }">
+          {{ registerType === 'participant' ? 'ثبت نام برنامه‌ریز' : 'ثبت نام شرکت‌کننده' }}
+        </a>
+      </p>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,72 @@
+<div class="competition-details-container" dir="rtl">
+  <div *ngIf="loading" class="loading-spinner">
+    در حال بارگذاری...
+  </div>
+
+  <div *ngIf="error" class="error-message">
+    {{ error }}
+  </div>
+
+  <div *ngIf="competition && !loading" class="competition-content">
+    <h1 class="page-title">{{ competition.title }}</h1>
+
+    <div class="image-container">
+      <div class="banner-image">
+        <app-image
+          [fileId]="competition.bannerImageId"
+          [altText]="competition.title + ' بنر'"
+          className="competition-image"
+        />
+      </div>
+      <div class="license-image">
+        <app-image
+          [fileId]="competition.licenseImageId"
+          [altText]="competition.title + ' مجوز'"
+          className="competition-image"
+        />
+      </div>
+    </div>
+
+    <div class="competition-info">
+      <div class="info-item">
+        <span class="value">زمان برگذاری: {{ competition.date | persianDate:'jYYYY/jMM/jDD' }}</span>
+        <span class="value">آدرس: {{ competition.address }}</span>
+        <span class="value">وضعیت مسابقه:
+          <span class="value status" [ngClass]="getStatusClass(competition.status)">
+            {{ getStatusText(competition.status) }}
+          </span>
+        </span>
+      </div>
+    </div>
+
+    <div *ngIf="competition.registerParams" class="params-section">
+      <h2>شرایط ثبت نام مسابقه</h2>
+      <div class="params-container">
+      <div *ngIf="competition.registerParams.values && competition.registerParams.values.length > 0" class="param-values">
+            <div *ngFor="let value of competition.registerParams.values" class="param-value">
+              <strong>{{ value.title }}</strong>
+              <div *ngIf="value.params && value.params.length > 0" class="nested-params">
+                <div *ngFor="let nestedParam of value.params" class="nested-param">
+                  <span>{{ nestedParam.title }}</span>
+                  <div *ngIf="nestedParam.values && nestedParam.values.length > 0">
+                    <span *ngFor="let nestedValue of nestedParam.values" class="nested-value">
+                      {{ nestedValue.title }}
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+       </div>
+
+
+    <!-- TODO: change perdicate *ngIf="competition.status === 2 && competition.canRegister" -->
+    <div class="register-section">
+      <button class="register-button" (click)="openRegisterModal()">
+        ثبت نام در مسابقه
+      </button>
+    </div>
+    </div>
+
+  </div>
+</div>
