@@ -76,7 +76,7 @@
     </div>
 
     <!-- Registration Button -->
-    <div class="text-center mb-4" *ngIf="competition.status !== 3 && !showRegistrationForm">
+    <div class="text-center mb-4" *ngIf="competition.status !== 3 && !isAuthenticated">
       <!-- Hide if ended or form shown -->
       <button class="btn btn-primary btn-lg px-5 shadow-sm" (click)="openRegisterModal()">
         <i class="bi bi-pencil-square me-2"></i>
@@ -86,7 +86,7 @@
     </div>
 
     <!-- Registration Form Section -->
-    <div #registrationSection class="cart shadow-sm mb-4" style="scroll-margin-top: 80px;">
+    <div *ngIf="isAuthenticated" #registrationSection class="cart shadow-sm mb-4" style="scroll-margin-top: 80px;">
       <div class="cart-body">
         <div class="competition-registration-container" id="registration-section">
           <div class="card shadow-sm mb-4">
@@ -94,10 +94,48 @@
               <div class="card-title py-3">
                 <h3 class="h5 mb-0">ثبت نام در مسابقه</h3>
               </div>
+
+              <!-- Registration Form -->
+              <form [formGroup]="registrationForm" (ngSubmit)="onSubmitRegistration()" *ngIf="!submitSuccess">
+                <!-- Coach Select Input -->
+                <div class="mb-3">
+                  <label class="form-label">مربی</label>
+                  <app-coach-select-input (coachSelected)="onCoachSelected($event)"></app-coach-select-input>
+                  <small class="form-text text-muted">شماره تلفن مربی خود را وارد کنید. اگر مربی شما در سیستم ثبت نشده
+                    است، شماره تلفن او ثبت خواهد شد.</small>
+                  <div *ngIf="registrationForm.get('coachId')?.invalid && registrationForm.get('coachId')?.touched"
+                    class="form-text text-danger">
+                    انتخاب مربی الزامی است.
+                  </div>
+                </div>
+
+                <!-- Dynamic Parameters -->
+                <div class="mb-4">
+                  <app-dynamic-form [data]="competition.registerParams" (paramSelected)="onParamSelected($event)" />
+                </div>
+
+                <!-- Submit Button -->
+                <div class="d-grid gap-2">
+                  <button type="submit" class="btn btn-primary" [disabled]="submitting">
+                    <span *ngIf="submitting" class="spinner-border spinner-border-sm me-2" role="status"
+                      aria-hidden="true"></span>
+                    ثبت نام
+                  </button>
+                </div>
+
+                <!-- Error Message -->
+                <div *ngIf="submitError" class="alert alert-danger mt-3">
+                  {{ submitError }}
+                </div>
+              </form>
+
+              <!-- Success Message -->
+              <div *ngIf="submitSuccess" class="alert alert-success">
+                ثبت نام شما با موفقیت انجام شد.
+              </div>
             </div>
           </div>
         </div>
-
       </div>
     </div>
   </div>

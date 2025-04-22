@@ -1,0 +1,25 @@
+<form [formGroup]="form">
+  <!-- Root Dropdown -->
+  <div class=" mb-3">
+  <label class="form-label">{{ data.title }}</label>
+  <select class="form-select" [formControlName]="data.key">
+    <option [ngValue]="null">انتخاب کنید</option>
+    @for (opt of rootOptions; track opt.key) {
+    <option [ngValue]="opt.key">{{ opt.title }}</option>
+    }
+  </select>
+  </div>
+
+  <!-- Dynamic Params -->
+  @for (param of selectedParams; track param.key) {
+  <div class="mb-3">
+    <label class="form-label">{{ param.title }}</label>
+    <select class="form-select" [formControlName]="param.key">
+      <option [ngValue]="null">انتخاب کنید</option>
+      @for (opt of param.values; track opt.key) {
+      <option [ngValue]="opt.key">{{ opt.title }}</option>
+      }
+    </select>
+  </div>
+  }
+</form>

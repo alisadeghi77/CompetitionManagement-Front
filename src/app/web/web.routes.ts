@@ -1,6 +1,6 @@
 import { Routes } from '@angular/router';
-import { WebLayoutComponent } from '../layouts/web/web-layout.component';
 import { authGuard } from '../core/guards/auth.guard';
+import { WebLayoutComponent } from '../shared/layouts/web/web-layout.component';
 
 export const webRoutes: Routes = [
   {

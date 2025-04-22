@@ -6,12 +6,14 @@ import { ImageComponent } from '../../../shared/components/image/image.component
 import { PersianDatePipe } from '../../../shared/pipes/persian-date.pipe';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { AuthService } from '../../../core/http-services/auth.service';
-// import { RegisterModalComponent } from '../../../shared/components/register-modal/register-modal.component';
+import { CoachSelectInputComponent } from '../../../shared/components/coach-select-input/coach-select-input.component';
+import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
+import { DynamicFormComponent } from '../../../shared/components/dynamic-params/dynamic-params.component';
 
 @Component({
   selector: 'app-competition-details',
   standalone: true,
-  imports: [CommonModule, RouterModule, ImageComponent, PersianDatePipe],
+  imports: [DynamicFormComponent, CommonModule, RouterModule, ImageComponent, PersianDatePipe, CoachSelectInputComponent, ReactiveFormsModule],
   templateUrl: './competition-details.component.html'
 })
 export class CompetitionDetailsComponent implements OnInit, AfterViewInit {
@@ -21,6 +23,11 @@ export class CompetitionDetailsComponent implements OnInit, AfterViewInit {
   error: string | null = null;
   isAuthenticated = false;
   showRegistrationForm = false;
+  registrationForm: FormGroup;
+  submitting = false;
+  submitError: string | null = null;
+  submitSuccess = false;
+  selectedCoach: any = null;
 
   @ViewChild('registrationSection') registrationSection?: ElementRef;
 
@@ -29,8 +36,17 @@ export class CompetitionDetailsComponent implements OnInit, AfterViewInit {
     private competitionService: CompetitionService,
     private modalService: NgbModal,
     private router: Router,
-    private authService: AuthService
-  ) { }
+    private authService: AuthService,
+    private fb: FormBuilder
+  ) {
+    this.registrationForm = this.fb.group({
+      coachId: [null],
+      weight: ['', [Validators.required, Validators.min(1)]],
+      age: ['', [Validators.required, Validators.min(1)]],
+      categoryId: ['', Validators.required],
+      note: ['']
+    });
+  }
 
   ngOnInit() {
     this.authService.currentUser$.subscribe(user => {
@@ -138,5 +154,87 @@ export class CompetitionDetailsComponent implements OnInit, AfterViewInit {
         block: 'start'
       });
     }
+  }
+
+  onCoachSelected(coach: any) {
+    this.selectedCoach = coach;
+    this.registrationForm.patchValue({
+      coachId: coach.id
+    });
+    console.log('Selected coach:', coach);
+  }
+
+  getCategoryOptions() {
+    if (!this.competition || !this.competition.registerParams || !this.competition.registerParams.values) {
+      return [];
+    }
+
+    const options: any[] = [];
+    this.competition.registerParams.values.forEach((val: any) => {
+      if (val.params && val.params.length > 0) {
+        val.params.forEach((param: any) => {
+          if (param.values && param.values.length > 0) {
+            param.values.forEach((subVal: any) => {
+              options.push({
+                id: subVal.id,
+                title: `${val.title} - ${param.title} - ${subVal.title}`
+              });
+            });
+          }
+        });
+      } else {
+        options.push({
+          id: val.id,
+          title: val.title
+        });
+      }
+    });
+
+    return options;
+  }
+
+  onSubmitRegistration() {
+    if (this.registrationForm.invalid) {
+      Object.keys(this.registrationForm.controls).forEach(key => {
+        const control = this.registrationForm.get(key);
+        control?.markAsTouched();
+      });
+      return;
+    }
+
+    this.submitting = true;
+    this.submitError = null;
+    this.submitSuccess = false;
+
+    const registrationData = {
+      competitionId: this.competitionId,
+      ...this.registrationForm.value
+    };
+
+    console.log('Registration data:', registrationData);
+
+    // Call your registration API here
+    // this.competitionService.registerForCompetition(registrationData).subscribe({
+    //   next: (response) => {
+    //     this.submitting = false;
+    //     this.submitSuccess = true;
+    //     this.registrationForm.reset();
+    //   },
+    //   error: (error) => {
+    //     this.submitting = false;
+    //     this.submitError = error.error?.message || 'خطا در ثبت نام. لطفا دوباره تلاش کنید.';
+    //   }
+    // });
+
+    // Simulate API call for now
+    setTimeout(() => {
+      this.submitting = false;
+      this.submitSuccess = true;
+      this.registrationForm.reset();
+    }, 1500);
+  }
+
+  onParamSelected(event: any) {
+    console.log(event);
   }
 }

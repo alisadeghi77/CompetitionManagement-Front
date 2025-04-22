@@ -1,8 +1,8 @@
 import { Component } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { CommonModule } from '@angular/common';
-import { AuthService } from '../../core/http-services/auth.service';
 import { Observable } from 'rxjs';
+import { AuthService } from '../../../core/http-services/auth.service';
 
 @Component({
   selector: 'app-admin-layout',

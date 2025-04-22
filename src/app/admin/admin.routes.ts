@@ -1,6 +1,6 @@
 import { Routes } from '@angular/router';
-import { AdminLayoutComponent } from '../layouts/admin/admin-layout.component';
 import { authGuard } from '../core/guards/auth.guard';
+import { AdminLayoutComponent } from '../shared/layouts/admin/admin-layout.component';
 
 export const adminRoutes: Routes = [
   {
