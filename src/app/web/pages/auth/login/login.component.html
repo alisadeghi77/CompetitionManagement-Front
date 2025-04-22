@@ -1,40 +1,49 @@
-<div class="login-container">
-  <div class="login-card">
-    <h2>ورود به سیستم</h2>
+<div class="container py-5" dir="rtl">
+  <div class="row justify-content-center">
+    <div class="col-md-6 col-lg-5 col-xl-4">
+      <div class="card shadow">
+        <div class="card-body p-4">
+          <h2 class="h4 mb-4 text-center">ورود به سیستم</h2>
 
-    <div *ngIf="isAuthenticated; else loginForm">
-      <p>شما قبلاً وارد شده‌اید!</p>
-      <button (click)="logout()" class="btn-logout">خروج</button>
-    </div>
+          <div *ngIf="isAuthenticated; else loginForm" class="text-center">
+            <p class="mb-3">شما قبلاً وارد شده‌اید!</p>
+            <button (click)="logout()" class="btn btn-danger w-100">خروج</button>
+          </div>
 
-    <ng-template #loginForm>
-      <form [formGroup]="phoneForm" (ngSubmit)="onSubmit()">
-        <div class="form-group">
-          <label for="phoneNumber">شماره موبایل</label>
-          <input
-            type="text"
-            id="phoneNumber"
-            formControlName="phoneNumber"
-            placeholder="09XXXXXXXXX"
-            dir="ltr"
-          >
-          <div *ngIf="phoneForm.get('phoneNumber')?.invalid && phoneForm.get('phoneNumber')?.touched" class="error-message">
-            شماره موبایل معتبر وارد کنید
+          <ng-template #loginForm>
+            <form [formGroup]="phoneForm" (ngSubmit)="onSubmit()">
+              <div class="mb-3">
+                <label for="phoneNumber" class="form-label">شماره موبایل</label>
+                <input
+                  type="text"
+                  id="phoneNumber"
+                  formControlName="phoneNumber"
+                  placeholder="09XXXXXXXXX"
+                  dir="ltr"
+                  class="form-control"
+                  [ngClass]="{'is-invalid': phoneForm.get('phoneNumber')?.invalid && phoneForm.get('phoneNumber')?.touched}"
+                >
+                <div *ngIf="phoneForm.get('phoneNumber')?.invalid && phoneForm.get('phoneNumber')?.touched" class="invalid-feedback">
+                  شماره موبایل معتبر وارد کنید
+                </div>
+              </div>
+              <button
+                type="submit"
+                [disabled]="phoneForm.invalid || isLoading"
+                class="btn btn-primary w-100"
+              >
+                <span *ngIf="isLoading" class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                <span *ngIf="isLoading">در حال ارسال...</span>
+                <span *ngIf="!isLoading">ارسال کد تایید</span>
+              </button>
+            </form>
+          </ng-template>
+
+          <div *ngIf="errorMessage" class="alert alert-danger mt-3 py-2 small">
+            {{ errorMessage }}
           </div>
         </div>
-        <button
-          type="submit"
-          [disabled]="phoneForm.invalid || isLoading"
-          class="btn-submit"
-        >
-          <span *ngIf="isLoading">در حال ارسال...</span>
-          <span *ngIf="!isLoading">ارسال کد تایید</span>
-        </button>
-      </form>
-    </ng-template>
-
-    <div *ngIf="errorMessage" class="error-message">
-      {{ errorMessage }}
+      </div>
     </div>
   </div>
 </div>

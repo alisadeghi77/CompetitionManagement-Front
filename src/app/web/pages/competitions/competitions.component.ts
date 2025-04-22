@@ -9,8 +9,7 @@ import { PersianDatePipe } from '../../../shared/pipes/persian-date.pipe';
   selector: 'app-competitions',
   standalone: true,
   imports: [CommonModule, RouterModule, ImageComponent, PersianDatePipe],
-  templateUrl: './competitions.component.html',
-  styleUrls: ['./competitions.component.scss']
+  templateUrl: './competitions.component.html'
 })
 export class CompetitionsComponent implements OnInit {
   competitions: any[] = [];
@@ -29,7 +28,7 @@ export class CompetitionsComponent implements OnInit {
 
     this.competitionService.getCompetitions().subscribe({
       next: (data) => {
-        this.competitions = [...data.data,...data.data,...data.data,...data.data,...data.data,...data.data];
+        this.competitions = data.data;
         this.loading = false;
       },
       error: (err) => {
@@ -42,19 +41,26 @@ export class CompetitionsComponent implements OnInit {
   getStatusText(status: number): string {
     switch (status) {
       case 0:
-        return 'در انتظار تایید ادمین';
+        return 'در انتظار تایید';
       case 1:
         return 'در انتظار شروع';
       case 2:
         return 'در حال اجرا';
       case 3:
-        return 'پایان مسابقه'
+        return 'پایان یافته';
       default:
-        return 'وضعیت نا مشخص';
+        return 'نامشخص';
     }
   }
 
-  getStatusClass(status: number): string {
-    return `status-${status}`;
+  // New method for badge classes
+  getStatusBadgeClass(status: number): string {
+    switch (status) {
+      case 0: return 'bg-secondary'; // Pending approval
+      case 1: return 'bg-info text-dark';    // Waiting to start
+      case 2: return 'bg-success'; // In progress
+      case 3: return 'bg-light text-dark'; // Finished
+      default: return 'bg-warning text-dark'; // Unknown
+    }
   }
 }

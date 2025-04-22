@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, RouterModule, Router } from '@angular/router';
 import { CompetitionService } from '../../../core/http-services/competition.service';
@@ -12,15 +12,17 @@ import { AuthService } from '../../../core/http-services/auth.service';
   selector: 'app-competition-details',
   standalone: true,
   imports: [CommonModule, RouterModule, ImageComponent, PersianDatePipe],
-  templateUrl: './competition-details.component.html',
-  styleUrls: ['./competition-details.component.scss']
+  templateUrl: './competition-details.component.html'
 })
-export class CompetitionDetailsComponent implements OnInit {
+export class CompetitionDetailsComponent implements OnInit, AfterViewInit {
   competitionId: number | null = null;
   competition: any = null;
   loading = true;
   error: string | null = null;
   isAuthenticated = false;
+  showRegistrationForm = false;
+
+  @ViewChild('registrationSection') registrationSection?: ElementRef;
 
   constructor(
     private route: ActivatedRoute,
@@ -31,7 +33,6 @@ export class CompetitionDetailsComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    // Check authentication status
     this.authService.currentUser$.subscribe(user => {
       this.isAuthenticated = !!user;
     });
@@ -46,6 +47,29 @@ export class CompetitionDetailsComponent implements OnInit {
         this.loading = false;
       }
     });
+
+    this.route.queryParams.subscribe(params => {
+      if (params['continueRegister']) {
+        if (!this.isAuthenticated) {
+          this.router.navigate([], {
+            relativeTo: this.route,
+            queryParams: { continueRegister: null },
+            queryParamsHandling: 'merge'
+          });
+        } else {
+          this.showRegistrationForm = true;
+        }
+      }
+    });
+  }
+
+  ngAfterViewInit() {
+    // Check if we need to scroll to registration section
+    this.route.queryParams.subscribe(params => {
+      if (params['continueRegister'] && this.isAuthenticated) {
+        setTimeout(() => this.scrollToRegistration(), 500);
+      }
+    });
   }
 
   loadCompetitionDetails() {
@@ -56,7 +80,7 @@ export class CompetitionDetailsComponent implements OnInit {
       this.competitionService.getCompetitionById(this.competitionId).subscribe({
         next: (data) => {
           this.competition = data.data;
-          console.log(this.competition.registerParams)
+          console.log(this.competition);
           this.loading = false;
         },
         error: (err) => {
@@ -70,29 +94,49 @@ export class CompetitionDetailsComponent implements OnInit {
   getStatusText(status: number): string {
     switch (status) {
       case 0:
-        return 'در انتظار تایید ادمین';
+        return 'در انتظار تایید';
       case 1:
         return 'در انتظار شروع';
       case 2:
         return 'در حال اجرا';
       case 3:
-        return 'پایان مسابقه';
+        return 'پایان یافته';
       default:
-        return 'وضعیت نا مشخص';
+        return 'نامشخص';
     }
   }
 
-  getStatusClass(status: number): string {
-    return `status-${status}`;
+  getStatusBadgeClass(status: number): string {
+    switch (status) {
+      case 0: return 'bg-secondary';
+      case 1: return 'bg-info text-dark';
+      case 2: return 'bg-success';
+      case 3: return 'bg-light text-dark';
+      default: return 'bg-warning text-dark';
+    }
   }
 
   openRegisterModal() {
-    const currentUrl = `/competition/${this.competitionId}`;
-    const encodedReturnUrl = encodeURIComponent(currentUrl);
+    if (!this.isAuthenticated) {
+      const currentUrl = `/competition/${this.competitionId}?continueRegister=true`;
+      const encodedReturnUrl = encodeURIComponent(currentUrl);
 
-    // Always go to register page, but with return URL for after registration
-    this.router.navigate(['/register/participant'], {
-      queryParams: { returnUrl: encodedReturnUrl }
-    });
+      // Go to register page with return URL for after registration
+      this.router.navigate(['/register/participant'], {
+        queryParams: { returnUrl: encodedReturnUrl }
+      });
+    } else {
+      this.showRegistrationForm = true;
+      setTimeout(() => this.scrollToRegistration(), 100);
+    }
+  }
+
+  scrollToRegistration() {
+    if (this.registrationSection) {
+      this.registrationSection.nativeElement.scrollIntoView({
+        behavior: 'smooth',
+        block: 'start'
+      });
+    }
   }
 }

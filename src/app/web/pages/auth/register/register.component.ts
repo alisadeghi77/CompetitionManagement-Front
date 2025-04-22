@@ -43,6 +43,7 @@ export class RegisterComponent implements OnInit {
   ngOnInit(): void {
     // Get returnUrl from query params
     this.route.queryParams.subscribe(params => {
+      console.log(params['returnUrl'])
       if (params['returnUrl']) {
         this.returnUrl = params['returnUrl'];
       }

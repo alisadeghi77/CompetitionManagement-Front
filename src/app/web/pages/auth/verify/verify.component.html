@@ -1,39 +1,55 @@
-<div class="verify-container">
-  <div class="verify-card">
-    <h2>تأیید کد</h2>
-    <p>کد تأیید ارسال شده به شماره {{ phoneNumber }} را وارد کنید</p>
+<div class="container py-5" dir="rtl">
+  <div class="row justify-content-center">
+    <div class="col-md-6 col-lg-5 col-xl-4">
+      <div class="card shadow">
+        <div class="card-body p-4">
+          <h2 class="h4 mb-3 text-center">تأیید کد</h2>
+          <p class="text-center mb-4">کد تأیید ارسال شده به شماره {{ phoneNumber }} را وارد کنید</p>
 
-    <form [formGroup]="verifyForm" (ngSubmit)="onSubmit()">
-      <div class="form-group">
-        <label for="otpCode">کد تأیید</label>
-        <input
-          type="text"
-          id="otpCode"
-          formControlName="otpCode"
-          placeholder="****"
-          maxlength="4"
-          dir="ltr"
-        >
-        <div *ngIf="verifyForm.get('otpCode')?.invalid && verifyForm.get('otpCode')?.touched" class="error-message">
-          کد تأیید معتبر وارد کنید
+          <form [formGroup]="verifyForm" (ngSubmit)="onSubmit()">
+            <div class="mb-3">
+              <label for="otpCode" class="form-label">کد تأیید</label>
+              <input
+                type="text"
+                id="otpCode"
+                formControlName="otpCode"
+                placeholder="****"
+                maxlength="4"
+                dir="ltr"
+                class="form-control form-control-lg text-center"
+                [ngClass]="{'is-invalid': verifyForm.get('otpCode')?.invalid && verifyForm.get('otpCode')?.touched}"
+              >
+              <div *ngIf="verifyForm.get('otpCode')?.invalid && verifyForm.get('otpCode')?.touched" class="invalid-feedback">
+                کد تأیید معتبر وارد کنید
+              </div>
+            </div>
+
+            <button
+              type="submit"
+              [disabled]="verifyForm.invalid || isLoading"
+              class="btn btn-primary w-100 mb-3"
+            >
+              <span *ngIf="isLoading" class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+              <span *ngIf="isLoading">در حال بررسی...</span>
+              <span *ngIf="!isLoading">تأیید</span>
+            </button>
+          </form>
+
+          <div class="text-center mt-3">
+            <a (click)="goBack()" class="text-decoration-none cursor-pointer">بازگشت به صفحه ورود</a>
+          </div>
+
+          <div *ngIf="errorMessage" class="alert alert-danger mt-3 py-2 small">
+            {{ errorMessage }}
+          </div>
         </div>
       </div>
-      <button
-        type="submit"
-        [disabled]="verifyForm.invalid || isLoading"
-        class="btn-submit"
-      >
-        <span *ngIf="isLoading">در حال بررسی...</span>
-        <span *ngIf="!isLoading">تأیید</span>
-      </button>
-    </form>
-
-    <div class="back-section">
-      <a (click)="goBack()" class="back-link">بازگشت به صفحه ورود</a>
-    </div>
-
-    <div *ngIf="errorMessage" class="error-message">
-      {{ errorMessage }}
     </div>
   </div>
 </div>
+
+<style>
+  .cursor-pointer {
+    cursor: pointer;
+  }
+</style>

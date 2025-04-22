@@ -26,10 +26,11 @@ export class AuthService {
 
   constructor(private http: HttpService) {
     // Check for existing token and user data
-    const token = localStorage.getItem('token');
-    const user = localStorage.getItem('user');
-    if (token && user) {
-      this.currentUserSubject.next(JSON.parse(user));
+    const userName = localStorage.getItem('userName');
+    const fullName = localStorage.getItem('fullName');
+    if (userName && fullName) {
+      this.currentUserSubject.next({ userName, fullName });
+
     }
   }
 
@@ -60,12 +61,14 @@ export class AuthService {
   }
 
   setToken(token: string): void {
-    localStorage.setItem('token', token);
+    debugger
   }
 
-  setUser(user: any): void {
-    localStorage.setItem('user', JSON.stringify(user));
-    this.currentUserSubject.next(user);
+  setUserLogin(token: string, userName: string, fullName: string): void {
+    localStorage.setItem('token', token);
+    localStorage.setItem('userName', userName);
+    localStorage.setItem('fullName', fullName);
+    this.currentUserSubject.next({ userName, fullName });
   }
 
   logout(): void {

@@ -53,25 +53,9 @@
       </button>
     </form>
 
-    <div class="login-link">
-      <p>قبلاً ثبت نام کرده‌اید؟ <a [routerLink]="['/login']" [queryParams]="{ returnUrl: returnUrl }">ورود</a></p>
-    </div>
-
     <div *ngIf="errorMessage" class="error-message">
       {{ errorMessage }}
     </div>
 
-    <div class="register-toggle">
-      <p>
-        {{ registerType === 'participant'
-          ? 'می‌خواهید به عنوان برنامه‌ریز ثبت نام کنید؟'
-          : 'می‌خواهید به عنوان شرکت‌کننده ثبت نام کنید؟'
-        }}
-        <a [routerLink]="[registerType === 'participant' ? '/register/planner' : '/register/participant']"
-           [queryParams]="{ returnUrl: returnUrl }">
-          {{ registerType === 'participant' ? 'ثبت نام برنامه‌ریز' : 'ثبت نام شرکت‌کننده' }}
-        </a>
-      </p>
-    </div>
   </div>
 </div>

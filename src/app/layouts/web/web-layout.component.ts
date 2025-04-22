@@ -10,122 +10,57 @@ import { Observable } from 'rxjs';
   standalone: true,
   imports: [RouterOutlet, CommonModule, RouterModule, RouterLink],
   template: `
-    <div class="web-layout" dir="rtl">
+    <div class="d-flex flex-column min-vh-100" dir="rtl">
       <!-- Header -->
-      <header class="header">
-        <div class="container">
-          <div class="logo">
-            <h1>مدیریت مسابقات</h1>
-            <nav>
-              <ul>
-              <li><a routerLink="/">خانه</a></li>
-              <li><a routerLink="/competitions">مسابقات</a></li>
-              <li><a [routerLink]="['/register']" [queryParams]="{ returnUrl: getCurrentUrl() }">ثبت نام</a></li>
-              <li *ngIf="isAuthenticated$ | async">
-                <a routerLink="/profile">پروفایل</a>
-              </li>
-            </ul>
-            </nav>
-          </div>
-         <nav>
-          <ul>
-               <li *ngIf="!(isAuthenticated$ | async)">
-                <a [routerLink]="['/login']" [queryParams]="{ returnUrl: getCurrentUrl() }">ورود</a>
-              </li>
-              <li *ngIf="isAuthenticated$ | async">
-                <button (click)="logout()">خروج</button>
-              </li>
-            </ul>
+      <header class="bg-white shadow-sm">
+        <div class="container py-3">
+          <nav class="navbar navbar-expand navbar-light">
+            <div class="d-flex align-items-center me-3">
+              <h1 class="h5 mb-0 me-3">مدیریت مسابقات</h1>
+            </div>
+            <div class="collapse navbar-collapse">
+              <ul class="navbar-nav me-auto mb-0">
+                <li class="nav-item">
+                  <a class="nav-link" routerLink="/">خانه</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" routerLink="/competitions">مسابقات</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" [routerLink]="['/register']" [queryParams]="{ returnUrl: getCurrentUrl() }">ثبت نام</a>
+                </li>
+                <li class="nav-item" *ngIf="isAuthenticated$ | async">
+                  <a class="nav-link" routerLink="/profile">پروفایل</a>
+                </li>
+              </ul>
+              <ul class="navbar-nav">
+                <li class="nav-item" *ngIf="!(isAuthenticated$ | async)">
+                  <a class="nav-link" [routerLink]="['/login']" [queryParams]="{ returnUrl: getCurrentUrl() }">ورود</a>
+                </li>
+                <li class="nav-item" *ngIf="isAuthenticated$ | async">
+                  <button class="btn nav-link border-0 bg-transparent" (click)="logout()">خروج</button>
+                </li>
+              </ul>
+            </div>
           </nav>
         </div>
       </header>
 
       <!-- Main Content -->
-      <main>
+      <main class="flex-grow-1 py-4">
         <router-outlet></router-outlet>
       </main>
 
       <!-- Footer -->
-      <footer class="footer">
+      <footer class="bg-dark text-white py-3 text-center">
         <div class="container">
-          <p>&copy; 2024 مدیریت مسابقات. تمامی حقوق محفوظ است.</p>
+          <p class="mb-0">&copy; 2024 مدیریت مسابقات. تمامی حقوق محفوظ است.</p>
         </div>
       </footer>
     </div>
-  `,
-  styles: [`
-    .web-layout {
-      display: flex;
-      flex-direction: column;
-      min-height: 100vh;
-    }
-
-    .header {
-      background: #fff;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-      padding: 1rem 0;
-    }
-
-    .container {
-      max-width: 1200px;
-      margin: 0 auto;
-      padding: 0 1rem;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-
-    .logo{
-        display:flex
-    }
-
-    .logo h1 {
-      margin: 0;
-      margin-left:16px;
-      font-size: 1.5rem;
-      font-family: 'IRANSans', sans-serif;
-    }
-
-    nav ul {
-      display: flex;
-      list-style: none;
-      margin: 0;
-      padding: 0;
-      gap: 1rem;
-    }
-
-    nav ul li a {
-      text-decoration: none;
-      color: #333;
-      font-family: 'IRANSans', sans-serif;
-    }
-
-    nav ul li button {
-      background: none;
-      border: none;
-      color: #333;
-      cursor: pointer;
-      font-family: 'IRANSans', sans-serif;
-      padding: 0;
-      font-size: 1rem;
-    }
-
-    main {
-      flex: 1;
-      padding: 2rem 0;
-    }
-
-    .footer {
-      background: #333;
-      color: white;
-      padding: 1rem 0;
-      text-align: center;
-      font-family: 'IRANSans', sans-serif;
-    }
-  `]
+  `
 })
 export class WebLayoutComponent {
-
   isAuthenticated$: Observable<boolean>;
 
   constructor(

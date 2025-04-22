@@ -10,8 +10,7 @@ import { HttpErrorResponse } from '@angular/common/http';
   selector: 'app-verify',
   standalone: true,
   imports: [CommonModule, FormsModule, ReactiveFormsModule, RouterLink],
-  templateUrl: './verify.component.html',
-  styleUrls: ['./verify.component.scss']
+  templateUrl: './verify.component.html'
 })
 export class VerifyComponent implements OnInit {
   verifyForm: FormGroup;
@@ -60,20 +59,16 @@ export class VerifyComponent implements OnInit {
 
     this.authService.verify(this.phoneNumber, otpCode).subscribe({
       next: (response: any) => {
+        debugger
         this.isLoading = false;
 
         // Store token and user data
-        if (response.token) {
-          this.authService.setToken(response.token);
+        if (response.data.token) {
+          this.authService.setUserLogin(response.data.token, response.data.userName, response.data.fullName);
         }
 
-        if (response.user) {
-          this.authService.setUser(response.user);
-        }
-
-        // Redirect to returnUrl if present, otherwise to home
         if (this.returnUrl) {
-          this.router.navigateByUrl(this.returnUrl);
+          this.router.navigateByUrl(decodeURIComponent(this.returnUrl));
         } else {
           this.router.navigate(['/']);
         }

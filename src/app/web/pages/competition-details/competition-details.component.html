@@ -1,72 +1,104 @@
-<div class="competition-details-container" dir="rtl">
-  <div *ngIf="loading" class="loading-spinner">
-    در حال بارگذاری...
+<div class="container py-4" dir="rtl">
+  <!-- Loading Spinner -->
+  <div *ngIf="loading" class="d-flex justify-content-center align-items-center" style="min-height: 300px;">
+    <div class="spinner-border text-primary" role="status">
+      <span class="visually-hidden">در حال بارگذاری...</span>
+    </div>
   </div>
 
-  <div *ngIf="error" class="error-message">
+  <!-- Error Message -->
+  <div *ngIf="error" class="alert alert-danger text-center" role="alert">
     {{ error }}
   </div>
 
+  <!-- Competition Content -->
   <div *ngIf="competition && !loading" class="competition-content">
-    <h1 class="page-title">{{ competition.title }}</h1>
+    <h1 class="h2 text-center mb-4 fw-bold">{{ competition.title }}</h1>
 
-    <div class="image-container">
-      <div class="banner-image">
-        <app-image
-          [fileId]="competition.bannerImageId"
-          [altText]="competition.title + ' بنر'"
-          className="competition-image"
-        />
+    <!-- Image Row -->
+    <div class="row g-4 mb-4">
+      <div class="col-md-6">
+        <h2 class="h6 text-muted text-center mb-2">بنر مسابقه</h2>
+        <app-image [fileId]="competition.bannerImageId" [altText]="competition.title + ' بنر'"
+          className="img-fluid rounded shadow-sm" />
       </div>
-      <div class="license-image">
-        <app-image
-          [fileId]="competition.licenseImageId"
-          [altText]="competition.title + ' مجوز'"
-          className="competition-image"
-        />
+      <div class="col-md-6">
+        <h2 class="h6 text-muted text-center mb-2">مجوز مسابقه</h2>
+        <app-image [fileId]="competition.licenseImageId" [altText]="competition.title + ' مجوز'"
+          className="img-fluid rounded shadow-sm" />
       </div>
     </div>
 
-    <div class="competition-info">
-      <div class="info-item">
-        <span class="value">زمان برگذاری: {{ competition.date | persianDate:'jYYYY/jMM/jDD' }}</span>
-        <span class="value">آدرس: {{ competition.address }}</span>
-        <span class="value">وضعیت مسابقه:
-          <span class="value status" [ngClass]="getStatusClass(competition.status)">
-            {{ getStatusText(competition.status) }}
-          </span>
-        </span>
+    <!-- Competition Info Card -->
+    <div class="card shadow-sm mb-4">
+      <div class="card-body p-4">
+        <h2 class="h5 card-title mb-3">اطلاعات مسابقه</h2>
+        <div class="d-flex flex-column gap-2">
+          <div class="d-flex justify-content-between">
+            <span class="fw-medium">زمان برگزاری:</span>
+            <span>{{ competition.date | persianDate:'jYYYY/jMM/jDD' }}</span>
+          </div>
+          <div class="d-flex justify-content-between">
+            <span class="fw-medium">آدرس:</span>
+            <span class="text-end">{{ competition.address }}</span>
+          </div>
+          <div class="d-flex justify-content-between align-items-center">
+            <span class="fw-medium">وضعیت:</span>
+            <!-- Using a function to get status-specific classes -->
+            <span class="badge rounded-pill px-3 py-1 {{ getStatusBadgeClass(competition.status) }}">
+              {{ getStatusText(competition.status) }}
+            </span>
+          </div>
+        </div>
       </div>
     </div>
 
-    <div *ngIf="competition.registerParams" class="params-section">
-      <h2>شرایط ثبت نام مسابقه</h2>
-      <div class="params-container">
-      <div *ngIf="competition.registerParams.values && competition.registerParams.values.length > 0" class="param-values">
-            <div *ngFor="let value of competition.registerParams.values" class="param-value">
-              <strong>{{ value.title }}</strong>
-              <div *ngIf="value.params && value.params.length > 0" class="nested-params">
-                <div *ngFor="let nestedParam of value.params" class="nested-param">
-                  <span>{{ nestedParam.title }}</span>
-                  <div *ngIf="nestedParam.values && nestedParam.values.length > 0">
-                    <span *ngFor="let nestedValue of nestedParam.values" class="nested-value">
-                      {{ nestedValue.title }}
-                    </span>
-                  </div>
-                </div>
+    <div *ngIf="competition.registerParams" class="card shadow-sm mb-4">
+      <div class="card-body p-4">
+        <h2 class="h5 card-title mb-3">شرایط ثبت نام</h2>
+        <div class="mb-2">
+          <strong class="d-block mb-1">{{ competition.registerParams.title }}:</strong>
+          <ul class="list-unstyled ps-3">
+            <li *ngFor="let val of competition.registerParams.values" class="mb-1">
+              <span>{{ val.title }}</span>
+              <!-- Display nested params if they exist -->
+              <ul *ngIf="val.params && val.params.length > 0" class="list-unstyled ps-3">
+                <li *ngFor="let subParam of val.params">
+                  <span class="text-muted me-1">{{ subParam.title }}:</span>
+                  <span *ngFor="let subVal of subParam.values; let last = last"
+                    class="badge bg-light text-dark me-1 mb-1">{{ subVal.title }}</span>
+                </li>
+              </ul>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- Registration Button -->
+    <div class="text-center mb-4" *ngIf="competition.status !== 3 && !showRegistrationForm">
+      <!-- Hide if ended or form shown -->
+      <button class="btn btn-primary btn-lg px-5 shadow-sm" (click)="openRegisterModal()">
+        <i class="bi bi-pencil-square me-2"></i>
+        ثبت نام در مسابقه
+      </button>
+      <div class="form-text mt-1" *ngIf="competition.status !== 2"> (ثبت‌نام در زمان شروع مسابقه امکان‌پذیر است)</div>
+    </div>
+
+    <!-- Registration Form Section -->
+    <div #registrationSection class="cart shadow-sm mb-4" style="scroll-margin-top: 80px;">
+      <div class="cart-body">
+        <div class="competition-registration-container" id="registration-section">
+          <div class="card shadow-sm mb-4">
+            <div class="card-body p-4">
+              <div class="card-title py-3">
+                <h3 class="h5 mb-0">ثبت نام در مسابقه</h3>
               </div>
             </div>
           </div>
-       </div>
+        </div>
 
-
-    <!-- TODO: change perdicate *ngIf="competition.status === 2 && competition.canRegister" -->
-    <div class="register-section">
-      <button class="register-button" (click)="openRegisterModal()">
-        ثبت نام در مسابقه
-      </button>
+      </div>
     </div>
-    </div>
-
   </div>
 </div>
