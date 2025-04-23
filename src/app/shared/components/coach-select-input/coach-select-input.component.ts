@@ -29,16 +29,14 @@ export class CoachSelectInputComponent implements OnInit {
 
   formatter = (coach: Coach) => {
     if (!coach) return '';
-    const phone = coach.phoneNumber;
-    const maskedPhone = phone.slice(7) + '***' + phone.slice(0, 4);
-    return coach.fullName ? `${coach.fullName} (${maskedPhone})` : phone;
+    return coach.fullName ? `${coach.fullName} (${coach.phoneNumber})` : coach.phoneNumber;
   };
 
   search: OperatorFunction<string, readonly Coach[]> = (text$: Observable<string>) =>
     text$.pipe(
       debounceTime(300),
       distinctUntilChanged(),
-      filter(term => term.length >= 5 && this.isNumberOnly(term)),
+      filter(term => this.isNumberOnly(term)),
       switchMap(term => {
         if (!this.isNumberOnly(term)) {
           return of([]);
@@ -46,11 +44,9 @@ export class CoachSelectInputComponent implements OnInit {
         return this.userService.getCoaches(term).pipe(
           map(response => {
             const coaches = response.data as any[];
-            console.log(coaches);
             if (coaches && coaches.length > 0) {
               return coaches as Coach[];
             } else {
-              // If no results, return an array with the entered phone number
               return [{ id: null, phoneNumber: term, fullName: null }] as Coach[];
             }
           })
@@ -59,11 +55,12 @@ export class CoachSelectInputComponent implements OnInit {
     );
 
   isNumberOnly(text: string): boolean {
-    return /^09\d{9}$/.test(text);
+    return /^09\d{3,}$/.test(text);
   }
 
   onSelectCoach(event: any): void {
     if (event && event.item) {
+      console.log("event.item", event.item);
       this.coachSelected.emit(event.item);
     }
   }

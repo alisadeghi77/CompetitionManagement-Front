@@ -9,6 +9,7 @@ import { AuthService } from '../../../core/http-services/auth.service';
 import { CoachSelectInputComponent } from '../../../shared/components/coach-select-input/coach-select-input.component';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { DynamicFormComponent } from '../../../shared/components/dynamic-params/dynamic-params.component';
+import { ParticipantService } from '../../../core/http-services/participant.service';
 
 @Component({
   selector: 'app-competition-details',
@@ -21,36 +22,40 @@ export class CompetitionDetailsComponent implements OnInit, AfterViewInit {
   competition: any = null;
   loading = true;
   error: string | null = null;
-  isAuthenticated = false;
   showRegistrationForm = false;
   registrationForm: FormGroup;
   submitting = false;
   submitError: string | null = null;
   submitSuccess = false;
-  selectedCoach: any = null;
 
   @ViewChild('registrationSection') registrationSection?: ElementRef;
 
   constructor(
     private route: ActivatedRoute,
+    private participantService: ParticipantService,
     private competitionService: CompetitionService,
-    private modalService: NgbModal,
     private router: Router,
     private authService: AuthService,
     private fb: FormBuilder
   ) {
     this.registrationForm = this.fb.group({
       coachId: [null],
-      weight: ['', [Validators.required, Validators.min(1)]],
-      age: ['', [Validators.required, Validators.min(1)]],
-      categoryId: ['', Validators.required],
-      note: ['']
+      coachPhoneNumber: [null],
+      competitionId: ['', Validators.required],
+      params: [null, Validators.required]
     });
+    this.registrationForm.addValidators(control => this.coachValidator(control as FormGroup));
+  }
+
+  coachValidator(form: FormGroup) {
+    const coachId = form.get('coachId')?.value;
+    const coachPhoneNumber = form.get('coachPhoneNumber')?.value;
+    return coachId || coachPhoneNumber ? null : { invalidCoach: true };
   }
 
   ngOnInit() {
     this.authService.currentUser$.subscribe(user => {
-      this.isAuthenticated = !!user;
+      this.showRegistrationForm = !!user;
     });
 
     this.route.paramMap.subscribe(params => {
@@ -63,34 +68,21 @@ export class CompetitionDetailsComponent implements OnInit, AfterViewInit {
         this.loading = false;
       }
     });
-
-    this.route.queryParams.subscribe(params => {
-      if (params['continueRegister']) {
-        if (!this.isAuthenticated) {
-          this.router.navigate([], {
-            relativeTo: this.route,
-            queryParams: { continueRegister: null },
-            queryParamsHandling: 'merge'
-          });
-        } else {
-          this.showRegistrationForm = true;
-        }
-      }
-    });
   }
 
   ngAfterViewInit() {
-    // Check if we need to scroll to registration section
-    this.route.queryParams.subscribe(params => {
-      if (params['continueRegister'] && this.isAuthenticated) {
-        setTimeout(() => this.scrollToRegistration(), 500);
-      }
-    });
+    if (this.showRegistrationForm) {
+      setTimeout(() => this.scrollToRegistration(), 500);
+    }
   }
 
   loadCompetitionDetails() {
     this.loading = true;
     this.error = null;
+
+    this.registrationForm.patchValue({
+      competitionId: this.competitionId
+    });
 
     if (this.competitionId) {
       this.competitionService.getCompetitionById(this.competitionId).subscribe({
@@ -132,12 +124,11 @@ export class CompetitionDetailsComponent implements OnInit, AfterViewInit {
     }
   }
 
-  openRegisterModal() {
-    if (!this.isAuthenticated) {
-      const currentUrl = `/competition/${this.competitionId}?continueRegister=true`;
+  openRegisterSection() {
+    debugger
+    if (!this.showRegistrationForm) {
+      const currentUrl = `/competition/${this.competitionId}`;
       const encodedReturnUrl = encodeURIComponent(currentUrl);
-
-      // Go to register page with return URL for after registration
       this.router.navigate(['/register/participant'], {
         queryParams: { returnUrl: encodedReturnUrl }
       });
@@ -157,40 +148,16 @@ export class CompetitionDetailsComponent implements OnInit, AfterViewInit {
   }
 
   onCoachSelected(coach: any) {
-    this.selectedCoach = coach;
-    this.registrationForm.patchValue({
-      coachId: coach.id
-    });
-    console.log('Selected coach:', coach);
-  }
-
-  getCategoryOptions() {
-    if (!this.competition || !this.competition.registerParams || !this.competition.registerParams.values) {
-      return [];
+    if (coach.id) {
+      this.registrationForm.patchValue({
+        coachId: coach.id
+      });
+    } else {
+      debugger
+      this.registrationForm.patchValue({
+        coachPhoneNumber: coach.phoneNumber
+      });
     }
-
-    const options: any[] = [];
-    this.competition.registerParams.values.forEach((val: any) => {
-      if (val.params && val.params.length > 0) {
-        val.params.forEach((param: any) => {
-          if (param.values && param.values.length > 0) {
-            param.values.forEach((subVal: any) => {
-              options.push({
-                id: subVal.id,
-                title: `${val.title} - ${param.title} - ${subVal.title}`
-              });
-            });
-          }
-        });
-      } else {
-        options.push({
-          id: val.id,
-          title: val.title
-        });
-      }
-    });
-
-    return options;
   }
 
   onSubmitRegistration() {
@@ -206,35 +173,29 @@ export class CompetitionDetailsComponent implements OnInit, AfterViewInit {
     this.submitError = null;
     this.submitSuccess = false;
 
-    const registrationData = {
-      competitionId: this.competitionId,
-      ...this.registrationForm.value
-    };
-
-    console.log('Registration data:', registrationData);
+    const formValues = this.registrationForm.value;
+    formValues.competitionId = this.competition.id;
+    debugger
 
     // Call your registration API here
-    // this.competitionService.registerForCompetition(registrationData).subscribe({
-    //   next: (response) => {
-    //     this.submitting = false;
-    //     this.submitSuccess = true;
-    //     this.registrationForm.reset();
-    //   },
-    //   error: (error) => {
-    //     this.submitting = false;
-    //     this.submitError = error.error?.message || 'خطا در ثبت نام. لطفا دوباره تلاش کنید.';
-    //   }
-    // });
-
-    // Simulate API call for now
-    setTimeout(() => {
-      this.submitting = false;
-      this.submitSuccess = true;
-      this.registrationForm.reset();
-    }, 1500);
+    this.participantService.registerParticipant(formValues).subscribe({
+      next: (response) => {
+        debugger
+        this.submitting = false;
+        this.submitSuccess = true;
+        this.registrationForm.reset();
+      },
+      error: (response) => {
+        this.submitting = false;
+        this.submitError = response.error?.errorMessages[0].message || 'خطا در ثبت نام. لطفا دوباره تلاش کنید.';
+      }
+    });
   }
 
   onParamSelected(event: any) {
     console.log(event);
+    this.registrationForm.patchValue({
+      params: event
+    });
   }
 }

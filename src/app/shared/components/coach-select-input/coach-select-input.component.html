@@ -9,7 +9,6 @@
     placement="bottom-end"
     placeholder="09123456789"
     (selectItem)="onSelectCoach($event)"
-    (keydown)="$event.key === 'Enter' ? onSelectCoach({item: {id: null, phoneNumber: searchTerm, fullName: null}}) : null"
     (keypress)="$event.charCode >= 48 && $event.charCode <= 57 || $event.preventDefault()"
   />
 </div>

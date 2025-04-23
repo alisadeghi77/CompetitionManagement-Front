@@ -60,10 +60,6 @@ export class AuthService {
     return this.http.post('/api/User/Participant', data);
   }
 
-  setToken(token: string): void {
-    debugger
-  }
-
   setUserLogin(token: string, userName: string, fullName: string): void {
     localStorage.setItem('token', token);
     localStorage.setItem('userName', userName);

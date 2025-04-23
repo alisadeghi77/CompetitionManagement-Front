@@ -10,20 +10,15 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
 
   return next(req).pipe(
     catchError(error => {
-      // Handle 401 Unauthorized errors
-      if (error.status === HttpStatusCode.Unauthorized) {
+      // Handle authentication-related errors
+      // if (
+      //   error.status === HttpStatusCode.Unauthorized ||
+      //   error.status === HttpStatusCode.Forbidden ||
+      //   (error.error && error.error.type === 'auth_error')
+      // ) {
         // Logout the user
-        authService.logout();
-
-        // Get current URL for returnUrl
-        const currentUrl = window.location.pathname;
-        const encodedReturnUrl = encodeURIComponent(currentUrl);
-
-        // Redirect to login page with returnUrl
-        router.navigate(['/login'], {
-          queryParams: { returnUrl: encodedReturnUrl }
-        });
-      }
+        // authService.logout();
+      // }
 
       return throwError(() => error);
     })

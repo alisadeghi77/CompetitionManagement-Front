@@ -90,7 +90,8 @@ export class DynamicFormComponent implements OnInit {
 
     this.form.valueChanges.subscribe(value => {
       if (this.form.valid) {
-        this.paramSelected.emit(value);
+        const mappedParams = Object.entries(value).map(([key, val]) => ({ key, value: val }));
+        this.paramSelected.emit(mappedParams);
       }
     });
 

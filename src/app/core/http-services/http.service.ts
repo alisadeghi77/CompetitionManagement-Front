@@ -27,7 +27,7 @@ export class HttpService {
       // Server-side error
       console.error(`Backend returned code ${error.status}, body was:`, error.error);
     }
-    return throwError(() => new Error('Something went wrong; please try again later.'));
+    return throwError(() => error);
   }
 
   get<T>(endpoint: string, params?: any): Observable<T> {

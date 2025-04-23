@@ -76,9 +76,9 @@
     </div>
 
     <!-- Registration Button -->
-    <div class="text-center mb-4" *ngIf="competition.status !== 3 && !isAuthenticated">
+    <div class="text-center mb-4" *ngIf="competition.status !== 3 && !showRegistrationForm">
       <!-- Hide if ended or form shown -->
-      <button class="btn btn-primary btn-lg px-5 shadow-sm" (click)="openRegisterModal()">
+      <button class="btn btn-primary btn-lg px-5 shadow-sm" (click)="openRegisterSection()">
         <i class="bi bi-pencil-square me-2"></i>
         ثبت نام در مسابقه
       </button>
@@ -86,7 +86,7 @@
     </div>
 
     <!-- Registration Form Section -->
-    <div *ngIf="isAuthenticated" #registrationSection class="cart shadow-sm mb-4" style="scroll-margin-top: 80px;">
+    <div *ngIf="showRegistrationForm" #registrationSection class="cart shadow-sm mb-4" style="scroll-margin-top: 80px;">
       <div class="cart-body">
         <div class="competition-registration-container" id="registration-section">
           <div class="card shadow-sm mb-4">
@@ -100,7 +100,7 @@
                 <!-- Coach Select Input -->
                 <div class="mb-3">
                   <label class="form-label">مربی</label>
-                  <app-coach-select-input (coachSelected)="onCoachSelected($event)"></app-coach-select-input>
+                  <app-coach-select-input (coachSelected)="onCoachSelected($event)" />
                   <small class="form-text text-muted">شماره تلفن مربی خود را وارد کنید. اگر مربی شما در سیستم ثبت نشده
                     است، شماره تلفن او ثبت خواهد شد.</small>
                   <div *ngIf="registrationForm.get('coachId')?.invalid && registrationForm.get('coachId')?.touched"
@@ -130,7 +130,7 @@
               </form>
 
               <!-- Success Message -->
-              <div *ngIf="submitSuccess" class="alert alert-success">
+              <div *ngIf="submitSuccess && !submitError" class="alert alert-success">
                 ثبت نام شما با موفقیت انجام شد.
               </div>
             </div>

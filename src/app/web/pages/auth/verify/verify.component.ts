@@ -59,7 +59,6 @@ export class VerifyComponent implements OnInit {
 
     this.authService.verify(this.phoneNumber, otpCode).subscribe({
       next: (response: any) => {
-        debugger
         this.isLoading = false;
 
         // Store token and user data
