@@ -1,0 +1,79 @@
+<div class="admin-layout">
+  <!-- Sidebar -->
+  <div class="sidebar" [class.collapsed]="sidebarCollapsed">
+    <div class="logo">
+      <h2>{{ sidebarCollapsed ? 'CM' : 'Competition Manager' }}</h2>
+    </div>
+    <div class="toggle-btn" (click)="toggleSidebar()">
+      <i class="toggle-icon">{{ sidebarCollapsed ? '→' : '←' }}</i>
+    </div>
+    <nav>
+      <ul>
+        <li>
+          <a routerLink="/admin/dashboard" routerLinkActive="active">
+            <span class="icon">📊</span>
+            <span class="text" *ngIf="!sidebarCollapsed">Dashboard</span>
+          </a>
+        </li>
+        <li>
+          <a routerLink="/admin/competitions" routerLinkActive="active">
+            <span class="icon">🏆</span>
+            <span class="text" *ngIf="!sidebarCollapsed">Competitions</span>
+          </a>
+        </li>
+        <li>
+          <a routerLink="/admin/participants" routerLinkActive="active">
+            <span class="icon">👥</span>
+            <span class="text" *ngIf="!sidebarCollapsed">Participants</span>
+          </a>
+        </li>
+        <li>
+          <a routerLink="/admin/matches" routerLinkActive="active">
+            <span class="icon">🎮</span>
+            <span class="text" *ngIf="!sidebarCollapsed">Matches</span>
+          </a>
+        </li>
+        <li>
+          <a routerLink="/admin/results" routerLinkActive="active">
+            <span class="icon">📈</span>
+            <span class="text" *ngIf="!sidebarCollapsed">Results</span>
+          </a>
+        </li>
+        <li>
+          <a routerLink="/admin/reports" routerLinkActive="active">
+            <span class="icon">📝</span>
+            <span class="text" *ngIf="!sidebarCollapsed">Reports</span>
+          </a>
+        </li>
+        <li>
+          <a routerLink="/admin/settings" routerLinkActive="active">
+            <span class="icon">⚙️</span>
+            <span class="text" *ngIf="!sidebarCollapsed">Settings</span>
+          </a>
+        </li>
+      </ul>
+    </nav>
+  </div>
+
+  <!-- Main Content -->
+  <div class="main-content" [class.expanded]="sidebarCollapsed">
+    <!-- Top Navigation -->
+    <header class="top-nav">
+      <div class="page-title">
+        <h1>Admin Dashboard</h1>
+      </div>
+      <div class="user-info">
+        <div class="user-name" *ngIf="currentUser$ | async as user">
+          <span class="welcome">Welcome,</span>
+          <span class="name">Admin</span>
+        </div>
+        <button class="logout-btn" (click)="logout()">Logout</button>
+      </div>
+    </header>
+
+    <!-- Page Content -->
+    <main>
+      <router-outlet></router-outlet>
+    </main>
+  </div>
+</div>
