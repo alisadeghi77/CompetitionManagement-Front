@@ -1,54 +1,54 @@
-<div class="admin-layout">
+<div class="d-flex h-100 min-vh-100">
   <!-- Sidebar -->
-  <div class="sidebar" [class.collapsed]="sidebarCollapsed">
-    <div class="logo">
-      <h2>{{ sidebarCollapsed ? 'CM' : 'Competition Manager' }}</h2>
+  <div class="bg-dark text-white" [ngClass]="{'sidebar-expanded': !sidebarCollapsed, 'sidebar-collapsed': sidebarCollapsed}">
+    <div class="py-3 px-3 border-bottom border-secondary text-center">
+      <h2 class="h5 m-0 text-truncate">{{ sidebarCollapsed ? 'CM' : 'Competition Manager' }}</h2>
     </div>
     <div class="toggle-btn" (click)="toggleSidebar()">
       <i class="toggle-icon">{{ sidebarCollapsed ? '→' : '←' }}</i>
     </div>
-    <nav>
-      <ul>
-        <li>
-          <a routerLink="/admin/dashboard" routerLinkActive="active">
-            <span class="icon">📊</span>
-            <span class="text" *ngIf="!sidebarCollapsed">Dashboard</span>
+    <nav class="mt-3">
+      <ul class="nav flex-column">
+        <li class="nav-item mb-2">
+          <a class="nav-link d-flex align-items-center px-3" routerLink="/admin/dashboard" routerLinkActive="active-nav-link">
+            <span class="me-3">📊</span>
+            <span class="text-truncate" *ngIf="!sidebarCollapsed">Dashboard</span>
           </a>
         </li>
-        <li>
-          <a routerLink="/admin/competitions" routerLinkActive="active">
-            <span class="icon">🏆</span>
-            <span class="text" *ngIf="!sidebarCollapsed">Competitions</span>
+        <li class="nav-item mb-2">
+          <a class="nav-link d-flex align-items-center px-3" routerLink="/admin/competitions" routerLinkActive="active-nav-link">
+            <span class="me-3">🏆</span>
+            <span class="text-truncate" *ngIf="!sidebarCollapsed">Competitions</span>
           </a>
         </li>
-        <li>
-          <a routerLink="/admin/participants" routerLinkActive="active">
-            <span class="icon">👥</span>
-            <span class="text" *ngIf="!sidebarCollapsed">Participants</span>
+        <li class="nav-item mb-2">
+          <a class="nav-link d-flex align-items-center px-3" routerLink="/admin/participants" routerLinkActive="active-nav-link">
+            <span class="me-3">👥</span>
+            <span class="text-truncate" *ngIf="!sidebarCollapsed">Participants</span>
           </a>
         </li>
-        <li>
-          <a routerLink="/admin/matches" routerLinkActive="active">
-            <span class="icon">🎮</span>
-            <span class="text" *ngIf="!sidebarCollapsed">Matches</span>
+        <li class="nav-item mb-2">
+          <a class="nav-link d-flex align-items-center px-3" routerLink="/admin/matches" routerLinkActive="active-nav-link">
+            <span class="me-3">🎮</span>
+            <span class="text-truncate" *ngIf="!sidebarCollapsed">Matches</span>
           </a>
         </li>
-        <li>
-          <a routerLink="/admin/results" routerLinkActive="active">
-            <span class="icon">📈</span>
-            <span class="text" *ngIf="!sidebarCollapsed">Results</span>
+        <li class="nav-item mb-2">
+          <a class="nav-link d-flex align-items-center px-3" routerLink="/admin/results" routerLinkActive="active-nav-link">
+            <span class="me-3">📈</span>
+            <span class="text-truncate" *ngIf="!sidebarCollapsed">Results</span>
           </a>
         </li>
-        <li>
-          <a routerLink="/admin/reports" routerLinkActive="active">
-            <span class="icon">📝</span>
-            <span class="text" *ngIf="!sidebarCollapsed">Reports</span>
+        <li class="nav-item mb-2">
+          <a class="nav-link d-flex align-items-center px-3" routerLink="/admin/reports" routerLinkActive="active-nav-link">
+            <span class="me-3">📝</span>
+            <span class="text-truncate" *ngIf="!sidebarCollapsed">Reports</span>
           </a>
         </li>
-        <li>
-          <a routerLink="/admin/settings" routerLinkActive="active">
-            <span class="icon">⚙️</span>
-            <span class="text" *ngIf="!sidebarCollapsed">Settings</span>
+        <li class="nav-item mb-2">
+          <a class="nav-link d-flex align-items-center px-3" routerLink="/admin/settings" routerLinkActive="active-nav-link">
+            <span class="me-3">⚙️</span>
+            <span class="text-truncate" *ngIf="!sidebarCollapsed">Settings</span>
           </a>
         </li>
       </ul>
@@ -56,23 +56,23 @@
   </div>
 
   <!-- Main Content -->
-  <div class="main-content" [class.expanded]="sidebarCollapsed">
+  <div class="flex-grow-1 bg-light" [ngClass]="{'ms-sidebar-expanded': !sidebarCollapsed, 'ms-sidebar-collapsed': sidebarCollapsed}">
     <!-- Top Navigation -->
-    <header class="top-nav">
-      <div class="page-title">
-        <h1>Admin Dashboard</h1>
+    <header class="bg-white py-3 px-4 shadow-sm d-flex justify-content-between align-items-center">
+      <div>
+        <h1 class="h4 m-0 text-secondary">Admin Dashboard</h1>
       </div>
-      <div class="user-info">
-        <div class="user-name" *ngIf="currentUser$ | async as user">
-          <span class="welcome">Welcome,</span>
-          <span class="name">Admin</span>
+      <div class="d-flex align-items-center">
+        <div class="d-flex flex-column text-end me-3" *ngIf="currentUser$ | async as user">
+          <span class="small text-muted">Welcome,</span>
+          <span class="fw-bold">Admin</span>
         </div>
-        <button class="logout-btn" (click)="logout()">Logout</button>
+        <button class="btn btn-danger" (click)="logout()">Logout</button>
       </div>
     </header>
 
     <!-- Page Content -->
-    <main>
+    <main class="p-4 overflow-auto">
       <router-outlet></router-outlet>
     </main>
   </div>
