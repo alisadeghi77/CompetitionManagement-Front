@@ -1,0 +1,81 @@
+.sortable {
+  cursor: pointer;
+  user-select: none;
+
+  &:hover {
+    background-color: rgba(0, 0, 0, 0.05);
+  }
+}
+
+/* Table Styles */
+.table {
+  margin-bottom: 0;
+  direction: rtl;
+}
+
+/* Custom utilities */
+.cursor-pointer {
+  cursor: pointer;
+}
+
+/* Responsive adjustments */
+@media (max-width: 767.98px) {
+  .table-responsive {
+    overflow-x: auto;
+  }
+}
+
+/* RTL Support */
+:host {
+  direction: rtl;
+}
+
+.table th,
+.table td {
+  text-align: right;
+}
+
+.input-group {
+  direction: rtl;
+}
+
+.pagination {
+  direction: rtl;
+}
+
+.table td {
+  vertical-align: middle;
+}
+
+
+
+::ng-deep {
+
+  .pagination {
+    border-radius: 0px !important;
+    margin: 0px !important;
+  }
+
+  .page-item:last-child .page-link{
+    border-top-left-radius: 0 !important;
+    border-bottom-left-radius: 0 !important;
+    border-radius: 0 !important;
+  }
+  .page-item:first-child .page-link {
+    border-top-left-radius: 0 !important;
+    border-bottom-left-radius: 0 !important;
+    border-radius: 0 !important;
+  }
+
+  .pagination .page-item:first-child {
+    border-top-left-radius: 0 !important;
+    border-bottom-left-radius: 0 !important;
+    border-radius: 0 !important;
+  }
+
+  .pagination .page-item:last-child {
+    border-top-right-radius: 0 !important;
+    border-bottom-right-radius: 0 !important;
+    border-radius: 0 !important;
+  }
+}

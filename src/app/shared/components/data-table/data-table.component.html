@@ -1,0 +1,94 @@
+<div class="table-responsive">
+  <!-- Search Input -->
+  <div class="row mb-3" *ngIf="showSearch">
+    <div class="col-md-4">
+      <div class="input-group">
+        <input type="text" class="form-control" [(ngModel)]="searchQuery" placeholder="Search..." (keyup.enter)="onSearch()">
+        <button class="btn btn-outline-secondary" type="button" (click)="onSearch()">
+          <i class="bi bi-search"></i>
+        </button>
+        <button class="btn btn-outline-secondary" type="button" *ngIf="searchQuery" (click)="clearSearch()">
+          <i class="bi bi-x"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Loading Indicator -->
+  <div class="text-center p-3" *ngIf="loading">
+    <div class="spinner-border text-primary" role="status">
+      <span class="visually-hidden">Loading...</span>
+    </div>
+  </div>
+
+  <!-- No Data Message -->
+  <div class="text-center p-3" *ngIf="!loading && (!displayData || displayData.length === 0)">
+    <p class="mb-0">{{ emptyMessage }}</p>
+  </div>
+
+  <!-- Data Table -->
+  <table class="table table-hover" *ngIf="!loading && displayData && displayData.length > 0">
+    <thead>
+      <tr>
+        <th *ngFor="let column of columns"
+            [style.width]="column.width"
+            [class.sortable]="column.sortable"
+            (click)="onSort(column)">
+          {{ column.title }}
+
+          <!-- Sort Indicators -->
+          <span *ngIf="sortField === column.field" class="ms-1">
+            <i *ngIf="sortDirection === 'asc'" class="bi bi-caret-up-fill"></i>
+            <i *ngIf="sortDirection === 'desc'" class="bi bi-caret-down-fill"></i>
+          </span>
+        </th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let row of displayData"
+          [class]="rowClass"
+          (click)="onRowClick(row)">
+        <td *ngFor="let column of columns" [ngSwitch]="column.type">
+          <!-- Custom Template -->
+          <ng-container *ngSwitchCase="'template'">
+            <ng-container *ngTemplateOutlet="column.template!; context:{$implicit: row, column: column}"></ng-container>
+          </ng-container>
+
+          <!-- Button -->
+          <ng-container *ngSwitchCase="'button'">
+            <button [class]="column.buttonClass || 'btn btn-primary btn-sm'"
+                    (click)="onButtonClick(row, column, $event)">
+              {{ column.buttonText || 'Action' }}
+            </button>
+          </ng-container>
+
+          <!-- Default Display -->
+          <ng-container *ngSwitchDefault>
+            {{ getFormattedValue(row, column) }}
+          </ng-container>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- Pagination -->
+  <div class="d-flex justify-content-between px-3 mt-3 align-items-center" *ngIf="enablePagination && displayData && displayData.length > 0">
+    <div>
+      <span class="text-muted">
+        Showing {{ ((currentPage - 1) * pageSize) + 1 }} to {{ Math.min(totalItems, currentPage * pageSize) }} of {{ totalItems }} entries
+      </span>
+    </div>
+    <ngb-pagination
+      [collectionSize]="totalItems"
+      [(page)]="currentPage"
+      [pageSize]="pageSize"
+      [maxSize]="5"
+      [rotate]="true"
+      [boundaryLinks]="true"
+      (pageChange)="onPageChange($event)"
+      aria-label="Default pagination"
+      class="mb-0">
+    </ngb-pagination>
+  </div>
+</div>
+

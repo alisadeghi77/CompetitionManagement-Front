@@ -16,8 +16,12 @@ import { FileService } from '../../../core/http-services/file.service';
     />
   `
 })
-export class ImageComponent implements OnInit {
-  @Input() fileId: number | null = null;
+export class ImageComponent {
+  @Input() set fileId(value: number | null) {
+    this.loadImage(value);
+  }
+
+
   @Input() altText: string = '';
   @Input() className: string = '';
   @Input() defaultImage: string = 'assets/images/default-competition.jpg';
@@ -26,14 +30,11 @@ export class ImageComponent implements OnInit {
 
   constructor(private fileService: FileService) { }
 
-  ngOnInit() {
-    this.loadImage();
-  }
 
-  loadImage() {
-    if (this.fileId) {
-      this.imageUrl = `http://localhost:5054/api/Files/${this.fileId}`;
-
+  loadImage(fileId: number | null) {
+    console.log('fileId', fileId);
+    if (fileId) {
+      this.imageUrl = `http://localhost:5054/api/Files/${fileId}`;
     }
   }
 

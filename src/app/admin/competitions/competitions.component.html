@@ -2,7 +2,17 @@
   <h2 class="mb-3">Competitions Management</h2>
   <div class="card shadow-sm">
     <div class="card-body">
-      <p class="mb-0">Here you can manage all competitions in the system.</p>
+      <app-data-table [columns]="columns" [data]="competitions" [enablePagination]="true" [pageSize]="10"
+        [showSearch]="false" [emptyMessage]="'No competitions found'" [loading]="!competitions.length && !errorMessage"
+        (rowClick)="onCompetitionClick($event)" (buttonClick)="onButtonClick($event)">
+      </app-data-table>
+      <div *ngIf="errorMessage" class="alert alert-danger mt-3">
+        {{ errorMessage }}
+      </div>
     </div>
   </div>
 </div>
+
+<ng-template #bannerTemplate let-row let-column="column">
+  <app-image [fileId]="row.bannerImageId" [altText]="row.title + ' بنر'" className="img-fluid rounded w-25 shadow-sm" />
+</ng-template>
