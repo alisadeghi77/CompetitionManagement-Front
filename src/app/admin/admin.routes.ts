@@ -22,6 +22,10 @@ export const adminRoutes: Routes = [
         loadComponent: () => import('./competitions/competitions.component').then(c => c.CompetitionsComponent)
       },
       {
+        path: 'competitions/:id',
+        loadComponent: () => import('./competitions/competition-details/competition-details.component').then(c => c.CompetitionDetailsComponent)
+      },
+      {
         path: 'participants',
         loadComponent: () => import('./participants/participants.component').then(c => c.ParticipantsComponent)
       },

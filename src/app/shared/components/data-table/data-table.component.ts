@@ -7,6 +7,7 @@ import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChange
 import { CommonModule } from '@angular/common';
 import { NgbPaginationModule } from '@ng-bootstrap/ng-bootstrap';
 import { FormsModule } from '@angular/forms';
+import { IconComponent } from '../icon/icon.component';
 
 export interface ColumnConfig {
   field: string;  // Property name in data object
@@ -15,6 +16,7 @@ export interface ColumnConfig {
   template?: TemplateRef<any>; // Custom template for rendering
   buttonText?: string; // For button type
   buttonClass?: string; // CSS class for button
+  buttonHandler?: (row: any) => void; // Direct method reference for button click
   sortable?: boolean; // Whether column is sortable
   formatFn?: (value: any, row: any) => string; // For custom formatting
   width?: string; // Column width
@@ -24,7 +26,7 @@ export interface ColumnConfig {
 @Component({
   selector: 'app-data-table',
   standalone: true,
-  imports: [CommonModule, NgbPaginationModule, FormsModule],
+  imports: [CommonModule, NgbPaginationModule, FormsModule, IconComponent],
   templateUrl: './data-table.component.html',
   styleUrls: ['./data-table.component.scss']
 })
@@ -154,7 +156,14 @@ export class DataTableComponent implements OnInit, OnChanges {
 
   onButtonClick(row: any, column: ColumnConfig, event: MouseEvent): void {
     event.stopPropagation();
-    this.buttonClick.emit({ row, column, event });
+
+    // If a direct handler is provided, call it
+    if (column.buttonHandler) {
+      column.buttonHandler(row);
+    } else {
+      // Otherwise emit the event as before
+      this.buttonClick.emit({ row, column, event });
+    }
   }
 
   getFieldValue(row: any, field: string): any {

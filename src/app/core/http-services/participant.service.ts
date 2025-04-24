@@ -15,8 +15,8 @@ export interface RegisterParticipantRequest {
 export class ParticipantService {
   constructor(private http: HttpService) {}
 
-  getParticipants(): Observable<any> {
-    return this.http.get('/api/Participant');
+  getParticipants(competitionId: number): Observable<any> {
+    return this.http.get(`/api/Participant?competitionId=${competitionId}`);
   }
 
   registerParticipant(data: RegisterParticipantRequest): Observable<any> {

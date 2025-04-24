@@ -4,6 +4,7 @@ import { DataTableComponent, ColumnConfig } from '../../shared/components/data-t
 import { CompetitionService } from '../../core/http-services/competition.service';
 import { Observable } from 'rxjs';
 import { ImageComponent } from '../../shared/components/image/image.component';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-competitions',
@@ -19,21 +20,32 @@ export class CompetitionsComponent implements OnInit {
 
   @ViewChild('bannerTemplate', { static: true }) bannerTemplate!: TemplateRef<any>;
 
-  constructor(private competitionService: CompetitionService) { }
+  constructor(
+    private competitionService: CompetitionService,
+    private router: Router
+  ) { }
 
   ngOnInit(): void {
     this.columns = [
-      { field: 'title', title: 'عنوان', sortable: true, width: '20%' },
+      { field: 'title', title: 'عنوان', sortable: true, width: '15%' },
       { field: 'date', title: 'تاریخ', type: 'date', sortable: true, width: '10%' },
       { field: 'address', title: 'آدرس', width: '20%' },
       { field: 'status', title: 'وضعیت', type: 'number', width: '10%' },
-      { field: 'licenseFileId', title: 'مجوز', type: 'template', width: '20%' },
+      { field: 'licenseFileId', title: 'مجوز', type: 'template', width: '15%' },
       {
         field: 'bannerFileId',
         title: 'بنر',
         type: 'template',
         template: this.bannerTemplate,
-        width: '20%'
+        width: '15%'
+      },
+      {
+        field: 'id',
+        title: 'جزئیات',
+        type: 'button',
+        buttonText: 'جزئیات',
+        buttonClass: 'btn btn-info btn-sm',
+        width: '15%'
       }
     ];
 
@@ -55,6 +67,8 @@ export class CompetitionsComponent implements OnInit {
 
   onButtonClick(event: { row: any, column: ColumnConfig, event: MouseEvent }): void {
     console.log('Button clicked:', event);
-    // Handle button click
+    if (event.column.field === 'id') {
+      this.router.navigate(['/admin/competitions', event.row.id]);
+    }
   }
 }

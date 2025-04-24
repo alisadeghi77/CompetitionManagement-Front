@@ -1,0 +1,81 @@
+<div class="container-fluid py-3" dir="rtl">
+
+  <!-- Loading Indicator -->
+  <div class="text-center p-5" *ngIf="loading">
+    <div class="spinner-border text-primary" role="status">
+      <span class="visually-hidden">در حال بارگذاری...</span>
+    </div>
+  </div>
+
+  <!-- Error Message -->
+  <div class="alert alert-danger" *ngIf="errorMessage">
+    <app-icon name="exclamation-triangle-fill" [size]="32" extraClass="ms-2"></app-icon>
+    {{ errorMessage }}
+  </div>
+
+  <!-- Competition Details -->
+  <div class="card shadow-sm mb-4" *ngIf="competition && !loading">
+    <div class="card-header bg-success text-white">
+      <h3 class="h5 mb-0">
+        <app-icon name="trophy" [size]="32" extraClass="ms-2"></app-icon>
+        {{ competition.title }}
+      </h3>
+    </div>
+    <div class="card-body">
+      <div class="row">
+        <div class="col-4">
+          <app-image [fileId]="competition.bannerImageId" [altText]="competition.title + ' بنر'"
+            className="img-fluid rounded shadow-sm" />
+        </div>
+        <div class="col-4">
+          <app-image [fileId]="competition.licenseImageId" [altText]="competition.title + ' مجوز'"
+            className="img-fluid rounded shadow-sm" />
+        </div>
+        <div class="col-4">
+          <div class="row">
+            <div class="col-12">
+              <p>
+                <app-icon name="calendar-event" [size]="24" extraClass="ms-2"></app-icon>
+                <strong>تاریخ:</strong> {{ competition.date | date }}
+              </p>
+            </div>
+            <div class="col-12">
+              <p>
+                <app-icon name="flag" [size]="24" extraClass="ms-2"></app-icon>
+                <strong>وضعیت:</strong> {{ getCompetitionStatusTitle(competition.status) }}
+              </p>
+            </div>
+            <div class="col-12">
+              <p>
+                <app-icon name="geo-alt" [size]="24" extraClass="ms-2"></app-icon>
+                <strong>آدرس:</strong> {{ competition.address }}
+              </p>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Participants Section -->
+  <div class="card shadow-sm" *ngIf="!loading">
+    <div class="card-header bg-success text-white d-flex justify-content-between align-items-center">
+      <h3 class="h5 mb-0">
+        <app-icon name="people" [size]="18" extraClass="ms-2"></app-icon>
+        شرکت کنندگان
+      </h3>
+      <span class="badge bg-light text-dark">
+        <app-icon name="person-check" [size]="14" extraClass="me-1"></app-icon>
+        {{ participants.length }} شرکت کننده
+      </span>
+    </div>
+    <div class="card-body">
+      <app-data-table [columns]="columns" [data]="participants" [enablePagination]="true" [pageSize]="10"
+        [showSearch]="true" [emptyMessage]="'هیچ شرکت کننده‌ای یافت نشد'" [loading]="participantsLoading"
+        (buttonClick)="onButtonClick($event)">
+      </app-data-table>
+    </div>
+  </div>
+</div>

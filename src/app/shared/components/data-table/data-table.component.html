@@ -1,17 +1,15 @@
 <div class="table-responsive">
   <!-- Search Input -->
   <div class="row mb-3" *ngIf="showSearch">
-    <div class="col-md-4">
-      <div class="input-group">
-        <input type="text" class="form-control" [(ngModel)]="searchQuery" placeholder="Search..." (keyup.enter)="onSearch()">
+    <div class="col-md-4 d-flex justify-content-end">
+        <input type="text" class="form-control" [(ngModel)]="searchQuery" placeholder="جستجو..." (keyup.enter)="onSearch()">
         <button class="btn btn-outline-secondary" type="button" (click)="onSearch()">
-          <i class="bi bi-search"></i>
+          <app-icon name="search" [size]="16" extraClass=""></app-icon>
         </button>
-        <button class="btn btn-outline-secondary" type="button" *ngIf="searchQuery" (click)="clearSearch()">
-          <i class="bi bi-x"></i>
+        <button class="btn btn-outline-secondary" type="button" *ngIf="!searchQuery" (click)="clearSearch()">
+          <app-icon name="x-lg" [size]="16" extraClass=""></app-icon>
         </button>
       </div>
-    </div>
   </div>
 
   <!-- Loading Indicator -->

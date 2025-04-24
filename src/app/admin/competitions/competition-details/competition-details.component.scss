@@ -1,0 +1,13 @@
+/* Right-to-left specific styles */
+:host {
+  text-align: right;
+}
+
+.card-header {
+  border-radius: 0;
+}
+
+/* Button styles */
+.btn-primary, .btn-info, .btn-success, .btn-danger {
+  min-width: 80px;
+}
