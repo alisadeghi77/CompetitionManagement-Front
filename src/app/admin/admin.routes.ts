@@ -8,11 +8,39 @@ export const adminRoutes: Routes = [
     component: AdminLayoutComponent,
     canActivate: [authGuard],
     children: [
-      // {
-      //   path: '',
-      //   redirectTo: 'dashboard',
-      //   pathMatch: 'full'
-      // }
+      {
+        path: '',
+        redirectTo: 'dashboard',
+        pathMatch: 'full'
+      },
+      {
+        path: 'dashboard',
+        loadComponent: () => import('./dashboard/dashboard.component').then(c => c.DashboardComponent)
+      },
+      {
+        path: 'competitions',
+        loadComponent: () => import('./competitions/competitions.component').then(c => c.CompetitionsComponent)
+      },
+      {
+        path: 'participants',
+        loadComponent: () => import('./participants/participants.component').then(c => c.ParticipantsComponent)
+      },
+      {
+        path: 'matches',
+        loadComponent: () => import('./matches/matches.component').then(c => c.MatchesComponent)
+      },
+      {
+        path: 'results',
+        loadComponent: () => import('./results/results.component').then(c => c.ResultsComponent)
+      },
+      {
+        path: 'reports',
+        loadComponent: () => import('./reports/reports.component').then(c => c.ReportsComponent)
+      },
+      {
+        path: 'settings',
+        loadComponent: () => import('./settings/settings.component').then(c => c.SettingsComponent)
+      }
     ]
   }
 ];

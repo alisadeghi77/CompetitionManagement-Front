@@ -25,7 +25,6 @@ export class AuthService {
   public currentUser$ = this.currentUserSubject.asObservable();
 
   constructor(private http: HttpService) {
-    // Check for existing token and user data
     const userName = localStorage.getItem('userName');
     const fullName = localStorage.getItem('fullName');
     if (userName && fullName) {
@@ -61,19 +60,39 @@ export class AuthService {
   }
 
   setUserLogin(token: string, userName: string, fullName: string): void {
-    localStorage.setItem('token', token);
-    localStorage.setItem('userName', userName);
-    localStorage.setItem('fullName', fullName);
-    this.currentUserSubject.next({ userName, fullName });
+
+    try {
+      localStorage.setItem('token', token);
+      localStorage.setItem('userName', userName);
+      localStorage.setItem('fullName', fullName);
+      localStorage.setItem('role', this.getRoleClaim(token));
+
+      this.currentUserSubject.next({ userName, fullName });
+
+    } catch (error) {
+      this.currentUserSubject.next(null);
+      console.error('دوباره تلاش کنید', error);
+    }
+
   }
 
   logout(): void {
     localStorage.removeItem('token');
-    localStorage.removeItem('user');
+    localStorage.removeItem('userName');
+    localStorage.removeItem('fullName');
+    localStorage.removeItem('role');
     this.currentUserSubject.next(null);
   }
 
   isAuthenticated(): boolean {
     return !!localStorage.getItem('token');
+  }
+
+  private getRoleClaim(token: string): string {
+    const [, payloadBase64] = token.split('.');
+    const payloadJson = atob(payloadBase64.replace(/-/g, '+').replace(/_/g, '/'));
+    const payload = JSON.parse(payloadJson);
+    const roleClaim = payload["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"];
+    return roleClaim;
   }
 }

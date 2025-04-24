@@ -32,6 +32,9 @@ import { AuthService } from '../../../core/http-services/auth.service';
                 <li class="nav-item" *ngIf="isAuthenticated$ | async">
                   <a class="nav-link" routerLink="/profile">پروفایل</a>
                 </li>
+                <li class="nav-item" *ngIf="isAdmin">
+                  <a class="nav-link admin-link" routerLink="/admin">مدیریت</a>
+                </li>
               </ul>
               <ul class="navbar-nav">
                 <li class="nav-item" *ngIf="!(isAuthenticated$ | async)">
@@ -58,10 +61,21 @@ import { AuthService } from '../../../core/http-services/auth.service';
         </div>
       </footer>
     </div>
-  `
+  `,
+  styles: [`
+    .admin-link {
+      font-weight: bold;
+      color: #e74c3c !important;
+    }
+
+    .admin-link:hover {
+      color: #c0392b !important;
+    }
+  `]
 })
 export class WebLayoutComponent {
   isAuthenticated$: Observable<boolean>;
+  isAdmin: boolean = false;
 
   constructor(
     private authService: AuthService,
@@ -70,11 +84,21 @@ export class WebLayoutComponent {
     this.isAuthenticated$ = this.authService.currentUser$.pipe(
       map(user => !!user)
     );
+
+    this.checkAdminRole();
+
+    this.authService.currentUser$.subscribe(() => {
+      this.checkAdminRole();
+    });
+  }
+
+  private checkAdminRole(): void {
+    const role = localStorage.getItem('role');
+    this.isAdmin = role?.split(',').includes('ADMIN') ?? false;
   }
 
   logout() {
     this.authService.logout();
-    // After logout, redirect to login page with the current URL as return URL
     const currentUrl = this.getCurrentUrl();
     this.router.navigate(['/login'], {
       queryParams: { returnUrl: currentUrl }

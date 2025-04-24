@@ -16,7 +16,6 @@ export const authGuard = () => {
 
       // Encode the current URL to use as returnUrl
       const currentUrl = window.location.pathname;
-      console.log(currentUrl)
       const encodedReturnUrl = encodeURIComponent(currentUrl);
 
       // Redirect to login with returnUrl
