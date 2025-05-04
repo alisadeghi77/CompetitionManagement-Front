@@ -1,0 +1,51 @@
+.bracket-container {
+  padding: 20px;
+  overflow-x: auto;
+}
+
+.loading, .error, .no-brackets {
+  text-align: center;
+  padding: 20px;
+  font-size: 16px;
+}
+
+.error {
+  color: #ff0000;
+}
+
+.bracket {
+  display: flex;
+  gap: 40px;
+  min-width: max-content;
+}
+
+.round {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.match {
+  background: #fff;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  padding: 10px;
+  min-width: 200px;
+}
+
+.match-content {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.participant {
+  padding: 8px;
+  border-radius: 4px;
+  background: #f5f5f5;
+
+  &.winner {
+    background: #e3f2fd;
+    font-weight: bold;
+  }
+}

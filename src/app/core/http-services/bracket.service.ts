@@ -12,6 +12,11 @@ export class BracketService {
     return this.http.get(`/api/Bracket/brackets-report/${bracketId}`);
   }
 
+
+  getBracketsKeysByCompetionId(competitionId: number): Observable<any> {
+    return this.http.get(`/api/Bracket/available-keys/${competitionId}`);
+  }
+
   getCoachScoreReport(bracketId: number): Observable<any> {
     return this.http.get(`/api/Bracket/coach-score-report/${bracketId}`);
   }

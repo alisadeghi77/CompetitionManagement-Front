@@ -10,11 +10,26 @@ import { Location } from '@angular/common';
 import { IconComponent } from '../../../shared/components/icon/icon.component';
 import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { MatchService, MatchWinnerRequest } from '../../../core/http-services/match.service';
+import { SingleEliminationBracketComponent } from "../../../shared/components/single-elimination-bracket/single-elimination-bracket.component";
+import { DynamicFormComponent } from '../../../shared/components/dynamic-params/dynamic-params.component';
+
+interface ParticipantParam {
+  key: string;
+  value: string;
+}
 
 @Component({
   selector: 'app-competition-details',
   standalone: true,
-  imports: [CommonModule, DataTableComponent, ImageComponent, IconComponent, ReactiveFormsModule],
+  imports: [
+    CommonModule,
+    DataTableComponent,
+    ImageComponent,
+    IconComponent,
+    ReactiveFormsModule,
+    SingleEliminationBracketComponent,
+    DynamicFormComponent
+  ],
   templateUrl: './competition-details.component.html',
   styleUrls: ['./competition-details.component.scss']
 })
@@ -75,6 +90,9 @@ export class CompetitionDetailsComponent implements OnInit {
     }
   ];
 
+  selectedParams: any[] = [];
+  selectedfilteredMatch: any;
+
   constructor(
     private route: ActivatedRoute,
     private competitionService: CompetitionService,
@@ -127,7 +145,7 @@ export class CompetitionDetailsComponent implements OnInit {
     this.matchTableLoading = true;
     this.matchTableError = null;
 
-    this.bracketService.getBracketsReport(this.competitionId).subscribe({
+    this.bracketService.getBracketsKeysByCompetionId(this.competitionId).subscribe({
       next: (response) => {
         this.brackets = response.data || [];
         this.matchTableLoading = false;
@@ -355,5 +373,36 @@ export class CompetitionDetailsComponent implements OnInit {
         this.errorMessage = error.message || 'خطا در تعیین برنده مسابقه';
       }
     });
+  }
+
+  onParamsSelected(params: any[]): void {
+    this.selectedParams = params;
+  }
+
+  private generateBracketKey(params: ParticipantParam[]): string {
+    return params.map(param => `${param.key}.${param.value}`).join('_');
+  }
+
+  searchBrackets(): void {
+    if (!this.brackets) return;
+
+    // Start with all brackets
+    this.filteredMatches = [...this.brackets];
+
+    // Convert selected params to ParticipantParam format
+    const searchParams: ParticipantParam[] = this.selectedParams.map(param => ({
+      key: param.key,
+      value: param.value
+    }));
+
+    // Generate the search key
+    const searchKey = this.generateBracketKey(searchParams);
+
+    // Filter brackets based on the generated key
+    this.selectedfilteredMatch = this.filteredMatches.filter(bracket => {
+      const bracketKey = bracket.key.toLowerCase();
+      return bracketKey.includes(searchKey.toLowerCase());
+    })[0];
+    console.log(this.selectedfilteredMatch);
   }
 }

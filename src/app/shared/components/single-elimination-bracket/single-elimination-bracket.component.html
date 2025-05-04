@@ -1,0 +1,28 @@
+<div class="bracket-container">
+  <div *ngIf="loading" class="loading">
+    Loading matches...
+  </div>
+
+  <div *ngIf="error" class="error">
+    {{ error }}
+  </div>
+
+  <div *ngIf="!hasAnyBrackets" class="no-brackets">
+    No brackets available for this category
+  </div>
+
+  <div *ngIf="!loading && !error && hasAnyBrackets" class="bracket">
+    <div class="round" *ngFor="let round of getRounds(); let i = index">
+      <div class="match" *ngFor="let match of getMatchesForRound(i)">
+        <div class="match-content">
+          <div class="participant" [class.winner]="match.winnerId === match.participant1Id">
+            {{ match.participant1Name || 'TBD' }}
+          </div>
+          <div class="participant" [class.winner]="match.winnerId === match.participant2Id">
+            {{ match.participant2Name || 'TBD' }}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

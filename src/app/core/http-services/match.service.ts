@@ -16,4 +16,9 @@ export class MatchService {
   setMatchWinner(data: MatchWinnerRequest): Observable<any> {
     return this.http.post('/api/Match', data);
   }
+
+
+  getBracketMatches(bracketKey: string): Observable<any> {
+    return this.http.get(`/api/Match/${bracketKey}`);
+  }
 }
