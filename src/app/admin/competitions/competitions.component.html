@@ -4,7 +4,7 @@
     <div class="card-body">
       <app-data-table [columns]="columns" [data]="competitions" [enablePagination]="true" [pageSize]="10"
         [showSearch]="false" [emptyMessage]="'No competitions found'" [loading]="!competitions.length && !errorMessage"
-        (rowClick)="onCompetitionClick($event)" (buttonClick)="onButtonClick($event)">
+        (rowClick)="onCompetitionClick($event)">
       </app-data-table>
       <div *ngIf="errorMessage" class="alert alert-danger mt-3">
         {{ errorMessage }}

@@ -14,7 +14,7 @@
   </div>
 
   <!-- Competition Details -->
-  <div class="card shadow-sm mb-4" *ngIf="competition && !loading">
+  <div class="card shadow-sm mb-4" *ngIf="competition ">
     <div class="card-header bg-success text-white">
       <h3 class="h5 mb-0">
         <app-icon name="trophy" [size]="32" extraClass="ms-2"></app-icon>
@@ -23,15 +23,8 @@
     </div>
     <div class="card-body">
       <div class="row">
-        <div class="col-4">
-          <app-image [fileId]="competition.bannerImageId" [altText]="competition.title + ' بنر'"
-            className="img-fluid rounded shadow-sm" />
-        </div>
-        <div class="col-4">
-          <app-image [fileId]="competition.licenseImageId" [altText]="competition.title + ' مجوز'"
-            className="img-fluid rounded shadow-sm" />
-        </div>
-        <div class="col-4">
+
+        <div class="col-6">
           <div class="row">
             <div class="col-12">
               <p>
@@ -42,7 +35,9 @@
             <div class="col-12">
               <p>
                 <app-icon name="flag" [size]="24" extraClass="ms-2"></app-icon>
-                <strong>وضعیت:</strong> {{ getCompetitionStatusTitle(competition.status) }}
+                <span class="badge rounded px-3 py-2 {{ getStatusBadgeClass(competition.status) }}">
+                  {{ getCompetitionStatusTitle(competition.status) }}
+                </span>
               </p>
             </div>
             <div class="col-12">
@@ -51,11 +46,70 @@
                 <strong>آدرس:</strong> {{ competition.address }}
               </p>
             </div>
+            <div class="col-12">
+              <div class="mb-2">
+                <strong class="h5 ">{{ competition.registerParams.title }}:</strong>
+                <ul class="list-unstyled ps-3">
+                  <li *ngFor="let val of competition.registerParams.values" class="mb-5">
+                    <span class="h5 ">{{ val.title }}</span>
+                    <ul *ngIf="val.params && val.params.length > 0" class="list-unstyled ps-3 mb-3">
+                      <li *ngFor="let subParam of val.params">
+                        <span class="h6 fw-bold me-1">{{ subParam.title }}:</span>
+                        <span *ngFor="let subVal of subParam.values; let last = last"
+                          class="badge bg-secondary text-white p-2 m-1">{{ subVal.title }}</span>
+                      </li>
+                    </ul>
+                  </li>
+                </ul>
+              </div>
+            </div>
 
           </div>
         </div>
+        <div class="col-3">
+          <app-image [fileId]="competition.bannerImageId" [altText]="competition.title + ' بنر'"
+            className="img-fluid rounded shadow-sm" />
+        </div>
+        <div class="col-3">
+          <app-image [fileId]="competition.licenseImageId" [altText]="competition.title + ' مجوز'"
+            className="img-fluid rounded shadow-sm" />
+        </div>
       </div>
+    </div>
+    <div class="card-footer d-flex justify-content-between">
 
+      <div>
+        <button class="btn btn-warning me-2 mb-2" (click)="changeVisibility()">
+          <app-icon name="eye" [size]="18" extraClass="me-1"></app-icon>
+          {{ competition.isVisible ? 'مخفی کردن مسابقه' : 'نمایش مسابقه' }}
+        </button>
+        <button class="btn btn-info me-2 mb-2" (click)="changeRegistrationStatus()">
+          <app-icon name="clipboard-check" [size]="18" extraClass="me-1"></app-icon>
+          {{ competition.canRegister ? 'توقف ثبت‌نام' : 'شروع ثبت‌نام' }}
+        </button>
+        <button class="btn btn-success me-2 mb-2" (click)="generateTable()">
+          <app-icon name="table" [size]="18" extraClass="me-1"></app-icon>
+          ایجاد جدول مسابقات
+        </button>
+      </div>
+      <div>
+        <button class="btn btn-outline-secondary me-2 mb-2" (click)="getParticipantReport()">
+          <app-icon name="file-earmark-person" [size]="18" extraClass="me-1"></app-icon>
+          گزارش شرکت‌کنندگان
+        </button>
+        <button class="btn btn-outline-secondary  me-2 mb-2" (click)="getCompetitionTablesReport()">
+          <app-icon name="file-earmark-spreadsheet" [size]="18" extraClass="me-1"></app-icon>
+          گزارش جداول مسابقات
+        </button>
+        <button class="btn btn-outline-secondary me-2 mb-2" (click)="getChampionsReport()">
+          <app-icon name="file-earmark-bar-graph" [size]="18" extraClass="me-1"></app-icon>
+          گزارش قهرمانان
+        </button>
+        <button class="btn btn-outline-secondary me-2 mb-2" (click)="getCoachTeamChampionsReport()">
+          <app-icon name="file-earmark-ruled" [size]="18" extraClass="me-1"></app-icon>
+          گزارش مربیان/تیم‌های قهرمان
+        </button>
+      </div>
     </div>
   </div>
 
@@ -73,9 +127,7 @@
     </div>
     <div class="card-body">
       <app-data-table [columns]="columns" [data]="participants" [enablePagination]="true" [pageSize]="10"
-        [showSearch]="true" [emptyMessage]="'هیچ شرکت کننده‌ای یافت نشد'" [loading]="participantsLoading"
-        (buttonClick)="onButtonClick($event)">
-      </app-data-table>
+        [showSearch]="true" [emptyMessage]="'هیچ شرکت کننده‌ای یافت نشد'" [loading]="participantsLoading" />
     </div>
   </div>
 </div>

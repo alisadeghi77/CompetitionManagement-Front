@@ -45,6 +45,9 @@ export class CompetitionsComponent implements OnInit {
         type: 'button',
         buttonText: 'جزئیات',
         buttonClass: 'btn btn-info btn-sm',
+        buttonHandler: (row: any) => {
+          this.router.navigate(['/admin/competitions', row.id]);
+        },
         width: '15%'
       }
     ];
@@ -63,12 +66,5 @@ export class CompetitionsComponent implements OnInit {
   onCompetitionClick(competition: any): void {
     console.log('Competition clicked:', competition);
     // Handle competition row click
-  }
-
-  onButtonClick(event: { row: any, column: ColumnConfig, event: MouseEvent }): void {
-    console.log('Button clicked:', event);
-    if (event.column.field === 'id') {
-      this.router.navigate(['/admin/competitions', event.row.id]);
-    }
   }
 }
