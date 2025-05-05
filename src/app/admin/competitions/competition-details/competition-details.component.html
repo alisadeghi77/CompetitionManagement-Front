@@ -132,9 +132,8 @@
           جستجو
         </button>
       </div>
-      <div class="mt-3" *ngIf="selectedfilteredMatch">
-        <app-single-elimination-bracket [bracketKey]="selectedfilteredMatch.key"
-          [hasAnyBrackets]="selectedfilteredMatch.hasAnyBrackets" />
+      <div class="mt-3" *ngIf="selectedfilteredMatch && selectedfilteredMatch.hasAnyBrackets">
+        <app-single-elimination-bracket [bracketKey]="selectedfilteredMatch.key" />
       </div>
     </div>
   </div>

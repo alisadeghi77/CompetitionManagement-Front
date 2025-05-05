@@ -1,58 +1,55 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { MatchService } from '../../../core/http-services/match.service';
 
+interface Participant {
+  id: number | null;
+  fullName: string | null;
+  coachId: string | null;
+  coachFullName: string | null;
+  isBye: boolean;
+}
+
 interface Match {
   id: string;
-  participant1Id: number;
-  participant2Id: number;
-  participant1Name: string;
-  participant2Name: string;
-  winnerId: number | null;
   round: number;
-  matchNumber: number;
+  matchNumberPosition: number;
+  first: Participant;
+  second: Participant;
+  winner: Participant;
 }
 
 @Component({
   selector: 'app-single-elimination-bracket',
-  templateUrl: './single-elimination-bracket.component.html',
-  styleUrls: ['./single-elimination-bracket.component.scss']
+  templateUrl: './single-elimination-bracket.component.html'
 })
-export class SingleEliminationBracketComponent implements OnInit {
-  @Input() bracketKey: string = '';
-  @Input() hasAnyBrackets: boolean = false;
+export class SingleEliminationBracketComponent {
+  private _bracketKey: string = '';
+  @Input() set bracketKey(value: string) {
+    this._bracketKey = value;
+      this.loadMatches();
+  }
+  get bracketKey(): string {
+    return this._bracketKey;
+  }
+
 
   matches: Match[] = [];
+  rounds: { [key: number]: Match[] } = {};
+  roundOrder: number[] = [128, 64, 32, 16, 8, 4, 2]; // Order from largest to smallest
   loading: boolean = false;
   error: string | null = null;
 
   constructor(private matchService: MatchService) { }
 
-  ngOnInit() {
-    if (this.hasAnyBrackets) {
-      this.loadMatches();
-    }
-  }
-
-  getRounds(): number[] {
-    if (!this.matches.length) return [];
-    const maxRound = Math.max(...this.matches.map(m => m.round));
-    return Array.from({ length: maxRound }, (_, i) => i + 1);
-  }
-
-  getMatchesForRound(roundIndex: number): Match[] {
-    return this.matches.filter(match => match.round === roundIndex + 1)
-      .sort((a, b) => a.matchNumber - b.matchNumber);
-  }
 
   private loadMatches() {
-    console.log(this.bracketKey);
     this.loading = true;
     this.error = null;
-
 
     this.matchService.getBracketMatches(this.bracketKey).subscribe({
       next: (response) => {
         this.matches = this.processMatches(response.data);
+        this.groupMatchesByRound();
         this.loading = false;
       },
       error: (err) => {
@@ -63,33 +60,73 @@ export class SingleEliminationBracketComponent implements OnInit {
   }
 
   private processMatches(matches: any[]): Match[] {
-    // Process and structure the matches data
-    return matches.map((match, index) => ({
+    return matches.map(match => ({
       id: match.id,
-      participant1Id: match.participant1Id,
-      participant2Id: match.participant2Id,
-      participant1Name: match.participant1Name || 'TBD',
-      participant2Name: match.participant2Name || 'TBD',
-      winnerId: match.winnerId,
-      round: this.calculateRound(index + 1, matches.length),
-      matchNumber: index + 1
+      round: match.round,
+      matchNumberPosition: match.matchNumberPosition,
+      first: {
+        id: match.firstParticipantId,
+        fullName: match.firstParticipantFullName,
+        coachId: match.firstParticipantCoachId,
+        coachFullName: match.firstParticipantCoachFullName,
+        isBye: match.isFirstParticipantBye
+      },
+      second: {
+        id: match.secondParticipantId,
+        fullName: match.secondParticipantFullName,
+        coachId: match.secondParticipantCoachId,
+        coachFullName: match.secondParticipantCoachFullName,
+        isBye: match.isSecondParticipantBye
+      },
+      winner: {
+        id: match.winnerParticipantId,
+        fullName: match.winnerParticipantFullName,
+        coachId: match.winnerParticipantCoachId,
+        coachFullName: match.winnerParticipantCoachFullName,
+        isBye: false
+      }
     }));
   }
 
-  private calculateRound(matchNumber: number, totalMatches: number): number {
-    // Calculate which round a match belongs to in a single elimination tournament
-    let round = 1;
-    let matchesInRound = totalMatches;
-
-    while (matchesInRound > 1) {
-      if (matchNumber <= matchesInRound) {
-        return round;
+  private groupMatchesByRound() {
+    this.rounds = {};
+    this.matches.forEach(match => {
+      if (!this.rounds[match.round]) {
+        this.rounds[match.round] = [];
       }
-      matchNumber -= matchesInRound;
-      matchesInRound = Math.floor(matchesInRound / 2);
-      round++;
-    }
+      this.rounds[match.round].push(match);
+    });
+  }
 
-    return round;
+  getRounds(): number[] {
+    console.log(this.roundOrder.filter(round => this.rounds[round]));
+    return this.roundOrder.filter(round => this.rounds[round]);
+  }
+
+  getMatchesForRound(round: number): Match[] {
+    return this.rounds[round] || [];
+  }
+
+  getParticipantDisplay(participant: Participant): string {
+    if (participant.isBye) {
+      return 'Bye';
+    }
+    if (!participant.fullName && !participant.coachFullName) {
+      return '-';
+    }
+    return `${participant.fullName} (${participant.coachFullName})`;
+  }
+
+  getRoundDisplay(round: number): string {
+    switch (round) {
+      case 128: return 'Round of 128';
+      case 64: return 'Round of 64';
+      case 32: return 'Round of 32';
+      case 16: return 'Round of 16';
+      case 8: return 'Quarter Finals';
+      case 4: return 'Semi Finals';
+      case 2: return 'Finals';
+      default: return `Round ${round}`;
+    }
   }
 }

@@ -403,6 +403,5 @@ export class CompetitionDetailsComponent implements OnInit {
       const bracketKey = bracket.key.toLowerCase();
       return bracketKey.includes(searchKey.toLowerCase());
     })[0];
-    console.log(this.selectedfilteredMatch);
   }
 }

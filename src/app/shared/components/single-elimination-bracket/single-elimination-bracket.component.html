@@ -1,28 +1,51 @@
-<div class="bracket-container">
-  <div *ngIf="loading" class="loading">
-    Loading matches...
-  </div>
-
-  <div *ngIf="error" class="error">
-    {{ error }}
-  </div>
-
-  <div *ngIf="!hasAnyBrackets" class="no-brackets">
-    No brackets available for this category
-  </div>
-
-  <div *ngIf="!loading && !error && hasAnyBrackets" class="bracket">
-    <div class="round" *ngFor="let round of getRounds(); let i = index">
-      <div class="match" *ngFor="let match of getMatchesForRound(i)">
-        <div class="match-content">
-          <div class="participant" [class.winner]="match.winnerId === match.participant1Id">
-            {{ match.participant1Name || 'TBD' }}
-          </div>
-          <div class="participant" [class.winner]="match.winnerId === match.participant2Id">
-            {{ match.participant2Name || 'TBD' }}
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-12">
+      @if (loading) {
+        <div class="text-center">
+          <div class="spinner-border" role="status">
+            <span class="visually-hidden">Loading...</span>
           </div>
         </div>
-      </div>
+      }
+
+      @if (error) {
+        <div class="alert alert-danger">
+          {{ error }}
+        </div>
+      }
+
+      @if (!loading && !error) {
+        <div class="bracket-container">
+          <div class="row">
+            @for (round of getRounds(); track round) {
+              <div class="col">
+                <div class="round-container">
+                  <h4 class="round-title">{{ getRoundDisplay(round) }}</h4>
+                  <div class="matches-container">
+                    @for (match of getMatchesForRound(round); track match.id) {
+                      <div class="match-card mb-3">
+                        <div class="card  border-0">
+                          <div class="card-body">
+                            <div class="participant border rounded-3 p-2 my-2 border-secondary" [class.winner]="match.winner?.id === match.first.id">
+                              <span class="badge bg-primary text-white">B</span>
+                              {{ getParticipantDisplay(match.first) }}
+                            </div>
+                            <div class="participant border rounded-3 p-2 my-2 border-secondary" [class.winner]="match.winner?.id === match.second.id">
+                              <span class="badge bg-danger text-white">R</span>
+                              {{ getParticipantDisplay(match.second) }}
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    }
+                  </div>
+                </div>
+              </div>
+            }
+          </div>
+        </div>
+      }
     </div>
   </div>
 </div>
