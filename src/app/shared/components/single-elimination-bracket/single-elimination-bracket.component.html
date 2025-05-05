@@ -19,14 +19,16 @@
       <div class="d-flex">
         @for (round of getRounds(); track round) {
         <div class="d-flex justify-content-around  flex-column">
-          <h4 class="round-title">{{ getRoundDisplay(round)  }} </h4>
+          <h4 class="round-title">{{ getRoundDisplay(round) }} </h4>
           @for (matchGroup of getMatchGroupsForRound(round); track matchGroup) {
+          @if (matchGroup.length > 0) {
           <div class="match-group mb-3 h-100">
             <div class="match-group-items">
               @for (match of matchGroup; track match.id) {
               <div class="match " style="width: 300px">
                 <div class="match-border">
-                  <div class="participant first">
+                  <div
+                    class="participant first {{match.isFirstParticipantBye || !match.firstParticipantId ? ' participant-not-clickable' : ''}}">
                     @if (match.isFirstParticipantBye) {
                     Bye
                     } @else if (!match.firstParticipantFullName && !match.firstParticipantCoachFullName) {
@@ -35,7 +37,8 @@
                     {{ match.firstParticipantFullName }} ({{ match.firstParticipantCoachFullName }})
                     }
                   </div>
-                  <div class="participant second">
+                  <div
+                    class="participant second {{match.isSecondParticipantBye || !match.secondParticipantId ? 'participant-not-clickable' : ''}}">
                     @if (match.isSecondParticipantBye) {
                     Bye
                     } @else if (!match.secondParticipantFullName && !match.secondParticipantCoachFullName) {
@@ -49,6 +52,7 @@
               }
             </div>
           </div>
+          }
           }
         </div>
         }

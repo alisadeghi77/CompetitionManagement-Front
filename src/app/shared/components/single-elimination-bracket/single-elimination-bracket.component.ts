@@ -1,6 +1,7 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { MatchService } from '../../../core/http-services/match.service';
 import { CommonModule } from '@angular/common';
+import { NgZone } from '@angular/core';
 
 interface Participant {
   id: number | null;
@@ -37,7 +38,7 @@ interface Match {
   templateUrl: './single-elimination-bracket.component.html',
   styleUrls: ['./single-elimination-bracket.component.scss']
 })
-export class SingleEliminationBracketComponent {
+export class SingleEliminationBracketComponent  {
   private _bracketKey: string = '';
   @Input() set bracketKey(value: string) {
     this._bracketKey = value;
@@ -106,27 +107,27 @@ export class SingleEliminationBracketComponent {
   }
 
   getRounds(): number[] {
-    const rounds = [...new Set(this.matches.map(match => match.round))].sort((a, b) => a - b);
-    return rounds;
+    return this.roundOrder.filter(round => this.rounds[round]?.length > 0)
+    .sort((a, b) => a - b);;
   }
-
 
   getRoundDisplay(round: number): string {
     const roundNames: { [key: number]: string } = {
-      128: 'Round of 128',
-      64: 'Round of 64',
-      32: 'Round of 32',
-      16: 'Round of 16',
-      8: 'Quarter Final',
-      4: 'Semi Final',
-      2: 'Final'
+      128: 'دور ۱۲۸',
+      64: 'دور ۶۴',
+      32: 'دور ۳۲',
+      16: 'دور ۱۶',
+      8: 'یک چهارم نهایی',
+      4: 'نیمه نهایی',
+      2: 'فینال'
     };
     return roundNames[round] || `Round ${round}`;
   }
 
   getMatchGroupsForRound(round: number): Match[][] {
-    const roundMatches = this.matches.filter(match => match.round === round);
+    const roundMatches = this.rounds[round] || [];
     const groups: Match[][] = [];
+
     for (let i = 0; i < roundMatches.length; i += 2) {
       const group = [roundMatches[i]];
       if (i + 1 < roundMatches.length) {
@@ -134,7 +135,7 @@ export class SingleEliminationBracketComponent {
       }
       groups.push(group);
     }
-    console.log('groups',groups.map(group => group.length).join(','));
+
     return groups;
   }
 }
