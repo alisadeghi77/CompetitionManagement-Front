@@ -56,9 +56,25 @@
 .participant {
   padding: 4px 8px;
   border-radius: 4px;
-  cursor: pointer;
-  &-not-clickable {
-    cursor: default;
+  transition: all 0.2s ease;
+
+  &.participant-clickable {
+    cursor: pointer;
+
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+  }
+
+  &.participant-not-clickable {
+    opacity: 0.7;
+    cursor: not-allowed;
+  }
+
+  &.winner {
+    font-weight: bold;
+    position: relative;
   }
 }
 

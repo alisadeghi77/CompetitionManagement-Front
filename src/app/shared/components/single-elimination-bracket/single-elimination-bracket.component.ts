@@ -74,6 +74,32 @@ export class SingleEliminationBracketComponent  {
     });
   }
 
+  onParticipantClick(match: Match, isFirstParticipant: boolean) {
+    const participantId = isFirstParticipant ? match.firstParticipantId : match.secondParticipantId;
+
+    // Don't proceed if participant is null or it's a bye match
+    if (!participantId ||
+        (isFirstParticipant && match.isFirstParticipantBye) ||
+        (!isFirstParticipant && match.isSecondParticipantBye)) {
+      return;
+    }
+
+    this.loading = true;
+    this.matchService.setMatchWinner({
+      matchId: match.id,
+      participantId: Number(participantId)
+    }).subscribe({
+      next: () => {
+        // Reload matches after setting winner
+        this.loadMatches();
+      },
+      error: (err) => {
+        this.error = 'Failed to set match winner';
+        this.loading = false;
+      }
+    });
+  }
+
   private processMatches(matches: any[]): Match[] {
     return matches.map(match => ({
       id: match.id,

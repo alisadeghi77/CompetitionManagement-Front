@@ -25,10 +25,12 @@
           <div class="match-group mb-3 h-100">
             <div class="match-group-items">
               @for (match of matchGroup; track match.id) {
-              <div class="match " style="width: 300px">
+              <div class="match" style="width: 300px">
                 <div class="match-border">
                   <div
-                    class="participant first {{match.isFirstParticipantBye || !match.firstParticipantId ? ' participant-not-clickable' : ''}}">
+                    class="participant first {{match.isFirstParticipantBye || !match.firstParticipantId ? ' participant-not-clickable' : ' participant-clickable'}}"
+                    (click)="onParticipantClick(match, true)"
+                    [class.winner]="match.winnerParticipantId === match.firstParticipantId">
                     @if (match.isFirstParticipantBye) {
                     Bye
                     } @else if (!match.firstParticipantFullName && !match.firstParticipantCoachFullName) {
@@ -38,7 +40,9 @@
                     }
                   </div>
                   <div
-                    class="participant second {{match.isSecondParticipantBye || !match.secondParticipantId ? 'participant-not-clickable' : ''}}">
+                    class="participant second {{match.isSecondParticipantBye || !match.secondParticipantId ? 'participant-not-clickable' : 'participant-clickable'}}"
+                    (click)="onParticipantClick(match, false)"
+                    [class.winner]="match.winnerParticipantId === match.secondParticipantId">
                     @if (match.isSecondParticipantBye) {
                     Bye
                     } @else if (!match.secondParticipantFullName && !match.secondParticipantCoachFullName) {
