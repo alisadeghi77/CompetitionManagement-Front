@@ -40,6 +40,7 @@ export class CompetitionDetailsComponent implements OnInit {
   errorMessage: any = null;
   loading: boolean = true;
   participantsLoading: boolean = true;
+  hasAnyBrackets: boolean = false;
 
   // Match table related properties
   brackets: any[] = [];
@@ -77,7 +78,8 @@ export class CompetitionDetailsComponent implements OnInit {
       buttonText: 'تایید',
       buttonClass: 'btn btn-success btn-sm  p-3',
       width: '70px',
-      buttonHandler: (row) => this.approveParticipant(row.id)
+      buttonHandler: (row) => this.approveParticipant(row.id),
+      visible: this.hasAnyBrackets
     },
     {
       field: 'id',
@@ -86,7 +88,8 @@ export class CompetitionDetailsComponent implements OnInit {
       buttonText: 'رد',
       buttonClass: 'btn btn-danger btn-sm  p-3',
       width: '70px',
-      buttonHandler: (row) => this.rejectParticipant(row.id)
+      buttonHandler: (row) => this.rejectParticipant(row.id),
+      visible: this.hasAnyBrackets
     }
   ];
 
@@ -148,6 +151,7 @@ export class CompetitionDetailsComponent implements OnInit {
     this.bracketService.getBracketsKeysByCompetionId(this.competitionId).subscribe({
       next: (response) => {
         this.brackets = response.data || [];
+        this.hasAnyBrackets = this.brackets.some((bracket: any) => bracket.hasAnyBrackets);
         this.matchTableLoading = false;
         if (this.brackets.length > 0) {
           this.selectedBracket = this.brackets[0];
@@ -246,7 +250,7 @@ export class CompetitionDetailsComponent implements OnInit {
         // You might want to add logic to display success message or update UI
       },
       error: (error) => {
-        console.error('Error generating table:', );
+        console.error('Error generating table:',);
         this.errorMessage = error || 'خطا در ایجاد جدول مسابقات';
       }
     });
@@ -403,5 +407,12 @@ export class CompetitionDetailsComponent implements OnInit {
       const bracketKey = bracket.key.toLowerCase();
       return bracketKey.includes(searchKey.toLowerCase());
     })[0];
+  }
+
+  onButtonClick(row: any, column: ColumnConfig, event: MouseEvent): void {
+    event.stopPropagation();
+    if (column.buttonHandler) {
+      column.buttonHandler(row);
+    }
   }
 }

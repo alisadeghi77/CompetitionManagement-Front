@@ -55,6 +55,7 @@
           <!-- Button -->
           <ng-container *ngSwitchCase="'button'">
             <button [class]="column.buttonClass || 'btn btn-primary btn-sm'"
+                    [disabled]="!column.visible"
                     (click)="onButtonClick(row, column, $event)">
               {{ column.buttonText || 'Action' }}
             </button>
