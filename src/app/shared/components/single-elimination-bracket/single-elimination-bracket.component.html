@@ -2,49 +2,57 @@
   <div class="row">
     <div class="col-12">
       @if (loading) {
-        <div class="text-center">
-          <div class="spinner-border" role="status">
-            <span class="visually-hidden">Loading...</span>
-          </div>
+      <div class="text-center">
+        <div class="spinner-border" role="status">
+          <span class="visually-hidden">Loading...</span>
         </div>
+      </div>
       }
 
       @if (error) {
-        <div class="alert alert-danger">
-          {{ error }}
-        </div>
+      <div class="alert alert-danger">
+        {{ error }}
+      </div>
       }
 
       @if (!loading && !error) {
-        <div class="bracket-container">
-          <div class="row">
-            @for (round of getRounds(); track round) {
-              <div class="col">
-                <div class="round-container">
-                  <h4 class="round-title">{{ getRoundDisplay(round) }}</h4>
-                  <div class="matches-container">
-                    @for (match of getMatchesForRound(round); track match.id) {
-                      <div class="match-card mb-3">
-                        <div class="card  border-0">
-                          <div class="card-body">
-                            <div class="participant border rounded-3 p-2 my-2 border-secondary" [class.winner]="match.winner?.id === match.first.id">
-                              <span class="badge bg-primary text-white">B</span>
-                              {{ getParticipantDisplay(match.first) }}
-                            </div>
-                            <div class="participant border rounded-3 p-2 my-2 border-secondary" [class.winner]="match.winner?.id === match.second.id">
-                              <span class="badge bg-danger text-white">R</span>
-                              {{ getParticipantDisplay(match.second) }}
-                            </div>
-                          </div>
-                        </div>
-                      </div>
+      <div class="d-flex">
+        @for (round of getRounds(); track round) {
+        <div class="d-flex justify-content-around  flex-column">
+          <h4 class="round-title">{{ getRoundDisplay(round)  }} </h4>
+          @for (matchGroup of getMatchGroupsForRound(round); track matchGroup) {
+          <div class="match-group mb-3 h-100">
+            <div class="match-group-items">
+              @for (match of matchGroup; track match.id) {
+              <div class="match " style="width: 300px">
+                <div class="match-border">
+                  <div class="participant first">
+                    @if (match.isFirstParticipantBye) {
+                    Bye
+                    } @else if (!match.firstParticipantFullName && !match.firstParticipantCoachFullName) {
+                    -
+                    } @else {
+                    {{ match.firstParticipantFullName }} ({{ match.firstParticipantCoachFullName }})
+                    }
+                  </div>
+                  <div class="participant second">
+                    @if (match.isSecondParticipantBye) {
+                    Bye
+                    } @else if (!match.secondParticipantFullName && !match.secondParticipantCoachFullName) {
+                    -
+                    } @else {
+                    {{ match.secondParticipantFullName }} ({{ match.secondParticipantCoachFullName }})
                     }
                   </div>
                 </div>
               </div>
-            }
+              }
+            </div>
           </div>
+          }
         </div>
+        }
+      </div>
       }
     </div>
   </div>

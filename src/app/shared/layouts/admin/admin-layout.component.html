@@ -2,53 +2,38 @@
   <!-- Sidebar -->
   <div class="bg-dark text-white" [ngClass]="{'sidebar-expanded': !sidebarCollapsed, 'sidebar-collapsed': sidebarCollapsed}">
     <div class="py-3 px-3 border-bottom border-secondary text-center">
-      <h2 class="h5 m-0 text-truncate">{{ sidebarCollapsed ? 'CM' : 'Competition Manager' }}</h2>
-    </div>
-    <div class="toggle-btn" (click)="toggleSidebar()">
-      <i class="toggle-icon">{{ sidebarCollapsed ? '→' : '←' }}</i>
+      <h2 class="h5 m-0 text-truncate text-secondary">{{ sidebarCollapsed ? 'CM' : 'Competition Manager' }}</h2>
     </div>
     <nav class="mt-3">
       <ul class="nav flex-column">
         <li class="nav-item mb-2">
           <a class="nav-link d-flex align-items-center px-3" routerLink="/admin/dashboard" routerLinkActive="active-nav-link">
-            <span class="me-3">📊</span>
+            <i class="bi bi-graph-up me-3"></i>
             <span class="text-truncate" *ngIf="!sidebarCollapsed">Dashboard</span>
           </a>
         </li>
         <li class="nav-item mb-2">
           <a class="nav-link d-flex align-items-center px-3" routerLink="/admin/competitions" routerLinkActive="active-nav-link">
-            <span class="me-3">🏆</span>
+            <i class="bi bi-trophy me-3"></i>
             <span class="text-truncate" *ngIf="!sidebarCollapsed">Competitions</span>
           </a>
         </li>
         <li class="nav-item mb-2">
           <a class="nav-link d-flex align-items-center px-3" routerLink="/admin/participants" routerLinkActive="active-nav-link">
-            <span class="me-3">👥</span>
+            <i class="bi bi-people me-3"></i>
             <span class="text-truncate" *ngIf="!sidebarCollapsed">Participants</span>
           </a>
         </li>
         <li class="nav-item mb-2">
-          <a class="nav-link d-flex align-items-center px-3" routerLink="/admin/matches" routerLinkActive="active-nav-link">
-            <span class="me-3">🎮</span>
-            <span class="text-truncate" *ngIf="!sidebarCollapsed">Matches</span>
-          </a>
-        </li>
-        <li class="nav-item mb-2">
-          <a class="nav-link d-flex align-items-center px-3" routerLink="/admin/results" routerLinkActive="active-nav-link">
-            <span class="me-3">📈</span>
-            <span class="text-truncate" *ngIf="!sidebarCollapsed">Results</span>
+          <a class="nav-link d-flex align-items-center px-3" routerLink="/admin/coaches" routerLinkActive="active-nav-link">
+            <i class="bi bi-controller me-3"></i>
+            <span class="text-truncate" *ngIf="!sidebarCollapsed">Coaches</span>
           </a>
         </li>
         <li class="nav-item mb-2">
           <a class="nav-link d-flex align-items-center px-3" routerLink="/admin/reports" routerLinkActive="active-nav-link">
-            <span class="me-3">📝</span>
+            <i class="bi bi-file-text me-3"></i>
             <span class="text-truncate" *ngIf="!sidebarCollapsed">Reports</span>
-          </a>
-        </li>
-        <li class="nav-item mb-2">
-          <a class="nav-link d-flex align-items-center px-3" routerLink="/admin/settings" routerLinkActive="active-nav-link">
-            <span class="me-3">⚙️</span>
-            <span class="text-truncate" *ngIf="!sidebarCollapsed">Settings</span>
           </a>
         </li>
       </ul>
@@ -58,15 +43,11 @@
   <!-- Main Content -->
   <div class="flex-grow-1 bg-light" [ngClass]="{'ms-sidebar-expanded': !sidebarCollapsed, 'ms-sidebar-collapsed': sidebarCollapsed}">
     <!-- Top Navigation -->
-    <header class="bg-white py-3 px-4 shadow-sm d-flex justify-content-between align-items-center">
+    <header style="padding: 9px;" class="bg-dark px-4 shadow-sm d-flex justify-content-between align-items-center">
       <div>
         <h1 class="h4 m-0 text-secondary">Admin Dashboard</h1>
       </div>
       <div class="d-flex align-items-center">
-        <div class="d-flex flex-column text-end me-3" *ngIf="currentUser$ | async as user">
-          <span class="small text-muted">Welcome,</span>
-          <span class="fw-bold">Admin</span>
-        </div>
         <button class="btn btn-danger" (click)="logout()">Logout</button>
       </div>
     </header>

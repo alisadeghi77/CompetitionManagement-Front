@@ -1,0 +1,228 @@
+.round {
+  display: grid;
+  gap: 20px;
+}
+
+.match-group {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+}
+
+.match-group-items {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+}
+
+.match-group-bracket {
+  display: flex;
+  width: 30px;
+  height: 120px;
+  border: black 1px solid;
+}
+
+.match {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 8px;
+  border-radius: 8px;
+  min-width: 180px;
+  justify-content: center;
+}
+
+.match-border {
+  position: relative;
+  padding: 8px;
+  background: white;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+}
+
+.match-position {
+  border: 1px solid #000;
+  border-radius: 50%;
+  width: 20px;
+  padding: 1px 4px 2px 2px;
+  text-align: center;
+  position: absolute;
+  top: -15px;
+  left: -15px;
+  background: #fff;
+  font-weight: 900;
+}
+
+.participant {
+  padding: 4px 8px;
+  border-radius: 4px;
+}
+
+.first {
+  margin-bottom: 4px;
+  background-color: #d0e8ff;
+  color: #004080;
+}
+
+.second {
+  background-color: #ffd6d6;
+  color: #800000;
+}
+
+.playoff-table {
+  font-family: sans-serif;
+  font-size: 15px;
+  line-height: 1.42857143;
+  font-weight: 400;
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  background-color: #f5f5f5;
+
+  * {
+    box-sizing: border-box;
+  }
+}
+
+.playoff-table-content {
+  display: flex;
+  padding: 20px;
+}
+
+.playoff-table-tour {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  justify-content: space-around;
+  position: relative;
+}
+
+.playoff-table-pair {
+  position: relative;
+
+  &:before {
+    content: '';
+    position: absolute;
+    top: 27px;
+    right: -12px;
+    width: 12px;
+    height: 1px;
+    background-color: red;
+  }
+
+  &:after {
+    content: '';
+    position: absolute;
+    width: 3px;
+    height: 1000px;
+    background-color: #f5f5f5;
+    right: -12px;
+    z-index: 1;
+  }
+
+  &:nth-child(even):after {
+    top: 28px;
+  }
+
+  &:nth-child(odd):after {
+    bottom: 28px;
+  }
+}
+
+.playoff-table-pair-style {
+  border: 1px solid #cccccc;
+  background-color: white;
+  width: 160px;
+  margin-bottom: 20px;
+}
+
+.playoff-table-group {
+  padding-right: 11px;
+  padding-left: 10px;
+  margin-bottom: 20px;
+  position: relative;
+  overflow: hidden;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  justify-content: space-around;
+
+  .playoff-table-pair-style:last-child {
+    margin-bottom: 0px;
+  }
+
+  &:after {
+    content: '';
+    position: absolute;
+    top: 28px;
+    bottom: 29px;
+    right: 0px;
+    width: 1px;
+    background-color: red;
+  }
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+}
+
+.playoff-table-left-player,
+.playoff-table-right-player {
+  min-height: 26px;
+  padding: 3px 5px;
+}
+
+.playoff-table-left-player {
+  border-bottom: 1px solid #cccccc;
+
+  &:before {
+    content: '';
+    position: absolute;
+    bottom: 27px;
+    left: -12px;
+    width: 12px;
+    height: 1px;
+    background-color: red;
+  }
+}
+
+.playoff-table-right-player {
+  margin-top: -1px;
+  border-top: 1px solid #cccccc;
+}
+
+.playoff-table-third-place {
+  position: absolute;
+  left: 11px;
+  top: 50%;
+  transform: translateY(-50%);
+  margin-top: 100px;
+
+  .playoff-table-left-player:before {
+    display: none;
+  }
+}
+
+.playoff-table-tour {
+  &:first-child {
+    .playoff-table-group {
+      padding-left: 0;
+    }
+
+    .playoff-table-left-player:before {
+      display: none;
+    }
+  }
+
+  &:last-child {
+    .playoff-table-group:after {
+      display: none;
+    }
+
+    .playoff-table-pair:after,
+    .playoff-table-pair:before {
+      display: none;
+    }
+  }
+}

@@ -1,5 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { MatchService } from '../../../core/http-services/match.service';
+import { CommonModule } from '@angular/common';
 
 interface Participant {
   id: number | null;
@@ -13,25 +14,38 @@ interface Match {
   id: string;
   round: number;
   matchNumberPosition: number;
-  first: Participant;
-  second: Participant;
-  winner: Participant;
+  firstParticipantId: string | null;
+  firstParticipantFullName: string | null;
+  firstParticipantCoachId: string | null;
+  firstParticipantCoachFullName: string | null;
+  isFirstParticipantBye: boolean;
+  secondParticipantId: string | null;
+  secondParticipantFullName: string | null;
+  secondParticipantCoachId: string | null;
+  secondParticipantCoachFullName: string | null;
+  isSecondParticipantBye: boolean;
+  winnerParticipantId: string | null;
+  winnerParticipantFullName: string | null;
+  winnerParticipantCoachId: string | null;
+  winnerParticipantCoachFullName: string | null;
 }
 
 @Component({
   selector: 'app-single-elimination-bracket',
-  templateUrl: './single-elimination-bracket.component.html'
+  standalone: true,
+  imports: [CommonModule],
+  templateUrl: './single-elimination-bracket.component.html',
+  styleUrls: ['./single-elimination-bracket.component.scss']
 })
 export class SingleEliminationBracketComponent {
   private _bracketKey: string = '';
   @Input() set bracketKey(value: string) {
     this._bracketKey = value;
-      this.loadMatches();
+    this.loadMatches();
   }
   get bracketKey(): string {
     return this._bracketKey;
   }
-
 
   matches: Match[] = [];
   rounds: { [key: number]: Match[] } = {};
@@ -64,27 +78,20 @@ export class SingleEliminationBracketComponent {
       id: match.id,
       round: match.round,
       matchNumberPosition: match.matchNumberPosition,
-      first: {
-        id: match.firstParticipantId,
-        fullName: match.firstParticipantFullName,
-        coachId: match.firstParticipantCoachId,
-        coachFullName: match.firstParticipantCoachFullName,
-        isBye: match.isFirstParticipantBye
-      },
-      second: {
-        id: match.secondParticipantId,
-        fullName: match.secondParticipantFullName,
-        coachId: match.secondParticipantCoachId,
-        coachFullName: match.secondParticipantCoachFullName,
-        isBye: match.isSecondParticipantBye
-      },
-      winner: {
-        id: match.winnerParticipantId,
-        fullName: match.winnerParticipantFullName,
-        coachId: match.winnerParticipantCoachId,
-        coachFullName: match.winnerParticipantCoachFullName,
-        isBye: false
-      }
+      firstParticipantId: match.firstParticipantId,
+      firstParticipantFullName: match.firstParticipantFullName,
+      firstParticipantCoachId: match.firstParticipantCoachId,
+      firstParticipantCoachFullName: match.firstParticipantCoachFullName,
+      isFirstParticipantBye: match.isFirstParticipantBye,
+      secondParticipantId: match.secondParticipantId,
+      secondParticipantFullName: match.secondParticipantFullName,
+      secondParticipantCoachId: match.secondParticipantCoachId,
+      secondParticipantCoachFullName: match.secondParticipantCoachFullName,
+      isSecondParticipantBye: match.isSecondParticipantBye,
+      winnerParticipantId: match.winnerParticipantId,
+      winnerParticipantFullName: match.winnerParticipantFullName,
+      winnerParticipantCoachId: match.winnerParticipantCoachId,
+      winnerParticipantCoachFullName: match.winnerParticipantCoachFullName
     }));
   }
 
@@ -99,34 +106,35 @@ export class SingleEliminationBracketComponent {
   }
 
   getRounds(): number[] {
-    console.log(this.roundOrder.filter(round => this.rounds[round]));
-    return this.roundOrder.filter(round => this.rounds[round]);
+    const rounds = [...new Set(this.matches.map(match => match.round))].sort((a, b) => a - b);
+    return rounds;
   }
 
-  getMatchesForRound(round: number): Match[] {
-    return this.rounds[round] || [];
-  }
-
-  getParticipantDisplay(participant: Participant): string {
-    if (participant.isBye) {
-      return 'Bye';
-    }
-    if (!participant.fullName && !participant.coachFullName) {
-      return '-';
-    }
-    return `${participant.fullName} (${participant.coachFullName})`;
-  }
 
   getRoundDisplay(round: number): string {
-    switch (round) {
-      case 128: return 'Round of 128';
-      case 64: return 'Round of 64';
-      case 32: return 'Round of 32';
-      case 16: return 'Round of 16';
-      case 8: return 'Quarter Finals';
-      case 4: return 'Semi Finals';
-      case 2: return 'Finals';
-      default: return `Round ${round}`;
+    const roundNames: { [key: number]: string } = {
+      128: 'Round of 128',
+      64: 'Round of 64',
+      32: 'Round of 32',
+      16: 'Round of 16',
+      8: 'Quarter Final',
+      4: 'Semi Final',
+      2: 'Final'
+    };
+    return roundNames[round] || `Round ${round}`;
+  }
+
+  getMatchGroupsForRound(round: number): Match[][] {
+    const roundMatches = this.matches.filter(match => match.round === round);
+    const groups: Match[][] = [];
+    for (let i = 0; i < roundMatches.length; i += 2) {
+      const group = [roundMatches[i]];
+      if (i + 1 < roundMatches.length) {
+        group.push(roundMatches[i + 1]);
+      }
+      groups.push(group);
     }
+    console.log('groups',groups.map(group => group.length).join(','));
+    return groups;
   }
 }
