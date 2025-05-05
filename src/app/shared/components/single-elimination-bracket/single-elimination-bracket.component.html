@@ -18,7 +18,7 @@
       @if (!loading && !error) {
       <div class="d-flex">
         @for (round of getRounds(); track round) {
-        <div class="d-flex justify-content-around  flex-column">
+        <div class="d-flex justify-content-around flex-column">
           <h4 class="round-title">{{ getRoundDisplay(round) }} </h4>
           @for (matchGroup of getMatchGroupsForRound(round); track matchGroup) {
           @if (matchGroup.length > 0) {
@@ -27,6 +27,7 @@
               @for (match of matchGroup; track match.id) {
               <div class="match" style="width: 300px">
                 <div class="match-border">
+                  <div class="match-number">{{ match.matchNumberPosition }}</div>
                   <div
                     class="participant first {{match.isFirstParticipantBye || !match.firstParticipantId ? ' participant-not-clickable' : ' participant-clickable'}}"
                     (click)="onParticipantClick(match, true)"

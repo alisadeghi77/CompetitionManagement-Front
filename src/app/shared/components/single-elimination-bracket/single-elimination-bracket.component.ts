@@ -130,6 +130,11 @@ export class SingleEliminationBracketComponent  {
       }
       this.rounds[match.round].push(match);
     });
+
+    // Sort matches in each round by matchNumberPosition in descending order
+    Object.keys(this.rounds).forEach(round => {
+      this.rounds[Number(round)].sort((a, b) => b.matchNumberPosition - a.matchNumberPosition);
+    });
   }
 
   getRounds(): number[] {
