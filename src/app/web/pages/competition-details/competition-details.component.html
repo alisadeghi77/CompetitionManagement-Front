@@ -76,17 +76,16 @@
     </div>
 
     <!-- Registration Button -->
-    <div class="text-center mb-4" *ngIf="competition.status !== 3 && !showRegistrationForm">
-      <!-- Hide if ended or form shown -->
+    <!-- Registration Button - Only show if competition is active and registration is allowed -->
+    <div class="text-center mb-4" *ngIf="competition.status !== 3 && competition.canRegister && !showRegistrationForm">
       <button class="btn btn-primary btn-lg px-5 shadow-sm" (click)="openRegisterSection()">
         <i class="bi bi-pencil-square me-2"></i>
         ثبت نام در مسابقه
       </button>
-      <div class="form-text mt-1" *ngIf="competition.status !== 2"> (ثبت‌نام در زمان شروع مسابقه امکان‌پذیر است)</div>
     </div>
 
-    <!-- Registration Form Section -->
-    <div *ngIf="showRegistrationForm" #registrationSection class="cart shadow-sm mb-4" style="scroll-margin-top: 80px;">
+    <!-- Registration Form Section - Only show if user is logged in and registration is allowed -->
+    <div *ngIf="showRegistrationForm && competition.canRegister" #registrationSection class="cart shadow-sm mb-4" style="scroll-margin-top: 80px;">
       <div class="cart-body">
         <div class="competition-registration-container" id="registration-section">
           <div class="card shadow-sm mb-4">
@@ -138,5 +137,30 @@
         </div>
       </div>
     </div>
+
+    <div class="card shadow-sm mb-4" *ngIf="!loading && competition?.registerParams">
+      <div class="card-header bg-success text-white">
+        <h3 class="h5 mb-0">
+          <app-icon name="search" [size]="18" extraClass="ms-2"></app-icon>
+          جستجوی دسته‌بندی
+        </h3>
+      </div>
+      <div class="card-body">
+        <app-dynamic-form
+          [data]="competition.registerParams"
+          (paramSelected)="onParamsSelected($event)">
+        </app-dynamic-form>
+        <div class="mt-3">
+          <button class="btn btn-primary" (click)="searchBrackets()">
+            <app-icon name="search" [size]="18" extraClass="ms-1"></app-icon>
+            جستجو
+          </button>
+        </div>
+        <div class="mt-3" *ngIf="selectedfilteredMatch && selectedfilteredMatch.hasAnyBrackets">
+          <app-single-elimination-bracket [bracketKey]="selectedfilteredMatch.key" />
+        </div>
+      </div>
+    </div>
+
   </div>
 </div>

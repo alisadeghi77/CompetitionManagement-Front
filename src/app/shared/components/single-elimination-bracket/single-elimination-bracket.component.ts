@@ -48,6 +48,8 @@ export class SingleEliminationBracketComponent  {
     return this._bracketKey;
   }
 
+  @Input() isReadOnly: boolean = false;
+
   matches: Match[] = [];
   rounds: { [key: number]: Match[] } = {};
   roundOrder: number[] = [128, 64, 32, 16, 8, 4, 2]; // Order from largest to smallest
@@ -75,6 +77,8 @@ export class SingleEliminationBracketComponent  {
   }
 
   onParticipantClick(match: Match, isFirstParticipant: boolean) {
+    if (this.isReadOnly) return;
+
     const participantId = isFirstParticipant ? match.firstParticipantId : match.secondParticipantId;
 
     // Don't proceed if participant is null or it's a bye match

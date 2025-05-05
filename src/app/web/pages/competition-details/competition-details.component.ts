@@ -10,11 +10,51 @@ import { CoachSelectInputComponent } from '../../../shared/components/coach-sele
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { DynamicFormComponent } from '../../../shared/components/dynamic-params/dynamic-params.component';
 import { ParticipantService } from '../../../core/http-services/participant.service';
+import { SingleEliminationBracketComponent } from '../../../shared/components/single-elimination-bracket/single-elimination-bracket.component';
+import { IconComponent } from '../../../shared/components/icon/icon.component';
+import { MatchService } from '../../../core/http-services/match.service';
+import { BracketService } from '../../../core/http-services/bracket.service';
+
+
+interface ParticipantParam {
+  key: string;
+  value: string;
+}
+
+interface Match {
+  id: string;
+  round: number;
+  matchNumberPosition: number;
+  firstParticipantId: string | null;
+  firstParticipantFullName: string | null;
+  firstParticipantCoachId: string | null;
+  firstParticipantCoachFullName: string | null;
+  isFirstParticipantBye: boolean;
+  secondParticipantId: string | null;
+  secondParticipantFullName: string | null;
+  secondParticipantCoachId: string | null;
+  secondParticipantCoachFullName: string | null;
+  isSecondParticipantBye: boolean;
+  winnerParticipantId: string | null;
+  winnerParticipantFullName: string | null;
+  winnerParticipantCoachId: string | null;
+  winnerParticipantCoachFullName: string | null;
+}
 
 @Component({
   selector: 'app-competition-details',
   standalone: true,
-  imports: [DynamicFormComponent, CommonModule, RouterModule, ImageComponent, PersianDatePipe, CoachSelectInputComponent, ReactiveFormsModule],
+  imports: [
+    DynamicFormComponent,
+    CommonModule,
+    RouterModule,
+    ImageComponent,
+    PersianDatePipe,
+    CoachSelectInputComponent,
+    ReactiveFormsModule,
+    SingleEliminationBracketComponent,
+    IconComponent
+  ],
   templateUrl: './competition-details.component.html'
 })
 export class CompetitionDetailsComponent implements OnInit, AfterViewInit {
@@ -27,8 +67,17 @@ export class CompetitionDetailsComponent implements OnInit, AfterViewInit {
   submitting = false;
   submitError: string | null = null;
   submitSuccess = false;
+  selectedfilteredMatch: { key: string; hasAnyBrackets: boolean } | null = null;
+  selectedPrams: any = null;
+  searching = false;
 
   @ViewChild('registrationSection') registrationSection?: ElementRef;
+  matchTableLoading: boolean = false;
+  matchTableError: string | null = null;
+  brackets: any;
+  selectedBracket: any;
+  filteredMatches: any[] = [];
+  selectedParams: any[] = [];
 
   constructor(
     private route: ActivatedRoute,
@@ -36,7 +85,9 @@ export class CompetitionDetailsComponent implements OnInit, AfterViewInit {
     private competitionService: CompetitionService,
     private router: Router,
     private authService: AuthService,
-    private fb: FormBuilder
+    private fb: FormBuilder,
+    private bracketService: BracketService,
+    private matchService: MatchService
   ) {
     this.registrationForm = this.fb.group({
       coachId: [null],
@@ -57,6 +108,7 @@ export class CompetitionDetailsComponent implements OnInit, AfterViewInit {
     this.authService.currentUser$.subscribe(user => {
       this.showRegistrationForm = !!user;
     });
+
 
     this.route.paramMap.subscribe(params => {
       const id = params.get('id');
@@ -88,7 +140,8 @@ export class CompetitionDetailsComponent implements OnInit, AfterViewInit {
       this.competitionService.getCompetitionById(this.competitionId).subscribe({
         next: (data) => {
           this.competition = data.data;
-          console.log(this.competition);
+          this.loadMatchTables();
+
           this.loading = false;
         },
         error: (err) => {
@@ -197,5 +250,60 @@ export class CompetitionDetailsComponent implements OnInit, AfterViewInit {
     this.registrationForm.patchValue({
       params: event
     });
+  }
+
+  onParamsSelected(params: any[]): void {
+    this.selectedPrams = params;
+  }
+
+  loadMatchTables(): void {
+    this.matchTableLoading = true;
+    this.matchTableError = null;
+debugger
+    this.bracketService.getBracketsKeysByCompetionId(this.competition.id).subscribe({
+      next: (response: any) => {
+        this.brackets = response.data || [];
+        this.matchTableLoading = false;
+        if (this.brackets.length > 0) {
+          this.selectedBracket = this.brackets[0];
+          this.filteredMatches = [...this.brackets];
+        }
+      },
+      error: (error: any) => {
+        console.error('Error loading match tables:', error);
+        this.matchTableError = 'خطا در بارگذاری جداول مسابقات';
+        this.matchTableLoading = false;
+      }
+    });
+  }
+
+
+  searchBrackets(): void {
+    debugger
+    if (!this.brackets) return;
+
+    // Start with all brackets
+    this.filteredMatches = [...this.brackets];
+
+    // Convert selected params to ParticipantParam format
+    const searchParams: ParticipantParam[] = this.selectedParams.map(param => ({
+      key: param.key,
+      value: param.value
+    }));
+
+    // Generate the search key
+    const searchKey = this.generateBracketKey(searchParams);
+
+    // Filter brackets based on the generated key
+    this.selectedfilteredMatch = this.filteredMatches.filter(bracket => {
+      const bracketKey = bracket.key.toLowerCase();
+      return bracketKey.includes(searchKey.toLowerCase());
+    })[0];
+    console.log(this.selectedfilteredMatch);
+  }
+
+
+  private generateBracketKey(params: ParticipantParam[]): string {
+    return params.map(param => `${param.key}.${param.value}`).join('_');
   }
 }

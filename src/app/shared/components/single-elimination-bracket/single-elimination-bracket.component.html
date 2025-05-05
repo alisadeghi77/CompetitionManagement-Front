@@ -29,7 +29,7 @@
                 <div class="match-border">
                   <div class="match-number">{{ match.matchNumberPosition }}</div>
                   <div
-                    class="participant first {{match.isFirstParticipantBye || !match.firstParticipantId ? ' participant-not-clickable' : ' participant-clickable'}}"
+                    class="participant first {{!isReadOnly && !match.isFirstParticipantBye && match.firstParticipantId ? ' participant-clickable' : ' participant-not-clickable'}}"
                     (click)="onParticipantClick(match, true)"
                     [class.winner]="match.winnerParticipantId === match.firstParticipantId">
                     @if (match.isFirstParticipantBye) {
@@ -41,7 +41,7 @@
                     }
                   </div>
                   <div
-                    class="participant second {{match.isSecondParticipantBye || !match.secondParticipantId ? 'participant-not-clickable' : 'participant-clickable'}}"
+                    class="participant second {{!isReadOnly && !match.isSecondParticipantBye && match.secondParticipantId ? 'participant-clickable' : 'participant-not-clickable'}}"
                     (click)="onParticipantClick(match, false)"
                     [class.winner]="match.winnerParticipantId === match.secondParticipantId">
                     @if (match.isSecondParticipantBye) {
